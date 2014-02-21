@@ -1,0 +1,72 @@
+/**
+ * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
+ */options{  JDK_VERSION = "1.5";  static = true;}PARSER_BEGIN(EG1)package just.grammar;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.File;
+
+public class EG1{  public static void main(String args []) throws ParseException  {
+    FileInputStream fileInput = null;
+	  
+	try {
+	  fileInput = new FileInputStream(new File("res/Code.txt"));
+	} catch (FileNotFoundException e1) {
+	  System.out.println("File not found");
+	  return;
+	}
+	  
+    EG1 parser = new EG1(System.in);
+    while (true)    {      System.out.println("Reading from file...");
+            try      {        switch (EG1.one_line())        {          case 0 :           System.out.println("OK.");          break;          case 1 :           System.out.println("Goodbye.");          break;          default :           break;        }      }      catch (Exception e)      {        System.out.println("NOK.");        System.out.println(e.getMessage());        EG1.ReInit(System.in);      }      catch (Error e)      {        System.out.println("Oops.");        System.out.println(e.getMessage());        break;      }    }  }}PARSER_END(EG1)SKIP :
+{
+  " "
+| "\r"
+| "\t"
+| "\n"
+}
+
+TOKEN : /* OPERATORS */
+{
+  < PLUS : "+" >
+| < MINUS : "-" >
+| < MULTIPLY : "*" >
+| < DIVIDE : "/" >
+}
+
+TOKEN : /* NUMBERS */
+{
+  < CONSTANT : (< DIGIT >)+ >
+| < #DIGIT : [ "0"-"9" ] >
+}
+
+TOKEN: /* TYPES */
+{
+	< INT : "int" >
+|	< VOID : "void" >
+|	< BOOLEAN : "boolean" >
+}
+
+TOKEN: /* program */
+{
+	< PROGRAM : "program" >
+}
+
+TOKEN: /* brackets */
+{
+	< CURLYBRACKETOPEN : "{" >
+| 	< CURLYBRACKETCLOSE :"}" >
+| 	< BRACKETOPEN : "(" >
+| 	< BRACKETCLOSE : ")" >
+}
+
+TOKEN : /* IDENT */
+{
+  < IDENT : (< CHAR >)+ >
+| < #CHAR : [ "a"-"z" ] >
+}
+int one_line() :{}{	< PROGRAM > <IDENT>
+	(	  <CURLYBRACKETOPEN>
+	  <CURLYBRACKETCLOSE> 
+	)
+	{	  return 0;
+	}}void sum() :{}{  term()  (    (      < PLUS >    | < MINUS >    )    term()  )*}void term() :{}{  unary()  (    (      < MULTIPLY >    | < DIVIDE >    )    unary()  )*}void unary() :{}{  < MINUS > element()| element()}void element() :{}{  < CONSTANT >| "(" sum() ")"}

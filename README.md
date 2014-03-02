@@ -1,4 +1,4 @@
 JavaCC
 ======
 
-JavaCC projects - Language Just
+JavaCC projects for language "Just"

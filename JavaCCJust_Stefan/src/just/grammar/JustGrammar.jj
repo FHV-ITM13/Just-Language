@@ -76,6 +76,7 @@ TOKEN: /* TYPES */
 	< INT : "int" >
 |	< VOID : "void" >
 |	< BOOLEAN : "boolean" >
+|	< ARRAY : ( < RECTBRACKETOPEN > < RECTBRACKETCLOSE > ) >
 }
 
 TOKEN: /* KEYWORDS */
@@ -90,7 +91,9 @@ TOKEN: /* KEYWORDS */
 | 	< SYNC : "synchronized" >
 | 	< IMPORT : "import" >
 | 	< COROUTINE : "coroutine" >
-| 	< CALL :"call" >
+| 	< CALL : "call" >
+|   < NEW : "new" >
+| 	< FUNCTION : "function" >
 }
 
 TOKEN: /* SYMBOLS */
@@ -142,7 +145,7 @@ void Definition() :
 void VarDef() :
 {}
 {
-	Type() < IDENT > ( Init() )? < END >
+	Type() (< ARRAY >)? < IDENT > ( Init() )? < END >
 }
 
 void Init() :
@@ -170,7 +173,7 @@ void FuncDef():
 void FuncHead():
 {}
 {
-	(< COROUTINE >)? Type() < IDENT > < ROUNDBRACKETOPEN > ( FormParList() )? < ROUNDBRACKETCLOSE >
+	< FUNCTION > (< COROUTINE >)? Type() < IDENT > < ROUNDBRACKETOPEN > ( FormParList() )? < ROUNDBRACKETCLOSE >
 }
 
 void FormParList():
@@ -320,6 +323,7 @@ void Fact():
 	  | < IDENT >
 	  | CallStat()
 	  | (< ROUNDBRACKETOPEN > Expr()  < ROUNDBRACKETCLOSE >)
+	  | < NEW > Type() < RECTBRACKETOPEN >  <NUMBER > < RECTBRACKETCLOSE >
 	)
 }
 

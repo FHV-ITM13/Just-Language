@@ -16,4 +16,11 @@ public class Symbol {
 	public Symbol symbols; // params and loc vars
 	public int level; // scope level
 	public Symbol next; // linear list of symbols within a scope
+	
+	
+	public Symbol(int spix, Kind kind) {
+		this.spix = spix;
+		this.kind = kind;
+	}
+	
 }

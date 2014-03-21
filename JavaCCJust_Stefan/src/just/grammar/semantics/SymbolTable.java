@@ -2,6 +2,7 @@ package just.grammar.semantics;
 
 import just.grammar.context.Namelist;
 import just.grammar.context.Scope;
+import just.grammar.semantics.Symbol.Kind;
 
 public class SymbolTable {
 	public static SymbolTable SymbolTable = new SymbolTable();
@@ -33,17 +34,26 @@ public class SymbolTable {
 
 	public Symbol lookup(String name) {
 		Integer spix = Namelist.NameList.spixOf(name);
-		Symbol curr = currScope.locals;
 		
-		while(curr != null) {
-			if(spix.equals(curr.spix)) {
-				return curr;
+		if(spix != null) {
+			Symbol curr = currScope.locals;
+			
+			while(curr != null) {
+				if(spix.equals(curr.spix)) {
+					return curr;
+				}
+				
+				curr = curr.next;
 			}
 			
-			curr = curr.next;
+			return null; //should never happen!
 		}
+				
+		Integer newSpix = Namelist.NameList.insert(name);
+		Symbol newSymbol = new Symbol(newSpix, Kind.undefKind);
+		insert(newSymbol);
 		
-		return null;
+		return newSymbol;
 	}
 	
 	public void printSymbols() {
@@ -51,6 +61,7 @@ public class SymbolTable {
 		
 		while(curr != null) {
 		    System.out.println(curr.spix + " - " + Namelist.NameList.nameOf(curr.spix));
+		    curr = curr.next;
 		}
 	}
 }

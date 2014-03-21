@@ -4,29 +4,17 @@ program EmJavaPrg {
 	var int globalVal; 
  
 	int doIt(byref int aParam, int aParam2) { 
-		var boolean b = true; 
+		var boolean b = true;
 		if (b) { 
 			var int i = 0; 
 			while (i < 10) { 
-			i = i + 1; 
+				i = i + 1; 
 			} 
 		} 
  
 		return 0; 
-	} 
+	}
 	
-	int doIt(byref int aParam, int aParam2) { 
-		var boolean b = true; 
-		if (b) { 
-			var int i = 0; 
-			while (i < 10) { 
-			i = i + 1; 
-			} 
-		} 
- 
-		return 0; 
-	} 
- 
 	coroutine void processSomething() { 
 		while (true) { 
  			synchronized(globalVal) { 

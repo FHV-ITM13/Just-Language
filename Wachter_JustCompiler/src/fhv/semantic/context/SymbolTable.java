@@ -1,12 +1,13 @@
 package fhv.semantic.context;
 
+import fhv.ParseException;
 import fhv.semantic.Symbol;
 
 public class SymbolTable {
 	public static SymbolTable symbolTable = new SymbolTable();
 
 	private SymbolTable() {
-		curLevel = 0;
+		curLevel = -1;
 		curScope = new Scope(null, curLevel);
 	}
 
@@ -23,12 +24,12 @@ public class SymbolTable {
 		this.curScope = this.curScope.outer;
 	}
 
-	public void insert(Symbol symbol) {
+	public void insert(Symbol symbol) throws ParseException {
 		this.curScope.insert(symbol);
 
 	}
 
-	public Symbol lookup(String name) {
+	public Symbol lookup(String name) throws ParseException {
 		Scope cur = this.curScope;
 		Integer spix = Namelist.nameList.lookup(name);
 		while (cur != null) {

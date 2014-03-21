@@ -1,5 +1,6 @@
 package fhv.semantic.context;
 
+import fhv.ParseException;
 import fhv.semantic.Symbol;
 
 public class Scope {
@@ -23,14 +24,23 @@ public class Scope {
 
 	public Symbol locals;
 
-	public void insert(Symbol symbol) {
-		if (symbol.type.equals(Symbol.Kind.parKind)) {
+	public void insert(Symbol symbol) throws ParseException {
+		if (this.lookup(symbol.spix) != null) {
+			throw new ParseException("Duplicate definition '"
+					+ Namelist.nameList.getNameOf(symbol.spix) + "' at level "
+					+ this.level);
+		}
+		if (symbol.kind.equals(Symbol.Kind.parKind)) {
 			this.numberOfParams += 1;
-		} else if (symbol.type.equals(Symbol.Kind.varKind)) {
+		} else if (symbol.kind.equals(Symbol.Kind.varKind)) {
 			this.numberOfLocals += 1;
 		}
 
-		locals.insert(symbol, this.level);
+		if (locals == null) {
+			locals = symbol;
+		} else {
+			locals.insert(symbol, this.level);
+		}
 	}
 
 	public Symbol lookup(Integer spix) {

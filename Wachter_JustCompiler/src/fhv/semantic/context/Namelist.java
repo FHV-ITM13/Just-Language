@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import fhv.ParseException;
+
 public class Namelist {
 	public static Namelist nameList = new Namelist();
 
@@ -14,15 +16,21 @@ public class Namelist {
 
 	private List<String> names = new ArrayList<>();
 
-	public Integer insert(String name) throws Exception {
-		if (names.contains(name)) {
-			throw new Exception("Duplicate Name");
+	public Integer insert(String name) {
+		if (spixs.containsKey(name)) {
+			return spixs.get(name);
+		} else {
+			names.add(name);
+			Integer spix = names.size() - 1;
+			spixs.put(name, spix);
+			return spix;
 		}
-		names.add(name);
-		return names.size() - 1;
 	}
 
-	public Integer lookup(String name) {
+	public Integer lookup(String name) throws ParseException {
+		if (!spixs.containsKey(name)) {
+			throw new ParseException("Name " + name + " not defined");
+		}
 		return spixs.get(name);
 	}
 

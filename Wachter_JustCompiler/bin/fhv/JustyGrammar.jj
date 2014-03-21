@@ -25,7 +25,7 @@ import fhv.semantic.*;public class EG1{  public static void main(String args
       e.printStackTrace();
     }  }}PARSER_END(EG1)SKIP :{  " "| "\r"| "\t"| "\n"}TOKEN : /* OPERATORS */{  < PLUS : "+" >| < MINUS : "-" >| < MULTIPLY : "*" >| < DIVIDE : "/" >}TOKEN : /*  */{  < PROGRAM : "program" >| < VAR : "var" >| < CALL : "call" >| < IMPORT : "import" >| < RETURN : "return" >| < BYREF : "byref" >| < COROUTINE : "coroutine" >| < SYNCHRONIZED : "synchronized" >| < NEW : "new" >| < POINT : "." >| < TRUE : "true" >| < FALSE : "false" >| < END : ";" >| < SEPERATOR : "," >}TOKEN :{  < OR : "||" >| < AND : "&&" >}TOKEN : /* BRACES */{  < OPEN_CURLY : "{" >| < CLOSE_CURLY : "}" >| < OPEN : "(" >| < CLOSE : ")" >| < OPEN_RECT : "[" >| < CLOSE_RECT : "]" >}TOKEN :{  < EQUAL : "==" >| < NOT_EQUAL : "!=" >| < SMALLER : "<" >| < GREATOR : ">" >| < SMALLER_EQUAL : "<=" >| < GREATOR_EQUAL : ">=" >| < NOT : "|" >}TOKEN : /* TYPES */{  < INT : "int" >| < BOOL : "boolean" >| < VOID : "void" >| < ARRAY : (< OPEN_RECT > < CLOSE_RECT >) >}TOKEN : /* IF */{  < IF : "if" >| < ELSE : "else" >}TOKEN : /* WHILE */{  < DO : "do" >| < WHILE : "while" >}TOKEN : /* ASSIGN OPERATORS */{  < ASSIGN : "=" >}TOKEN : /* Identifier */{  < IDENTIFIER :    (      < LOWER_LETTER >    | < UPPER_LETTER >    )    (      < LOWER_LETTER >    | < UPPER_LETTER >    | < NUMBER >    )*     >| < #LOWER_LETTER : [ "a"-"z" ] >| < #UPPER_LETTER : [ "A"-"Z" ] >}TOKEN : /* Number */{  < NUMBER : (< DIGIT >)+ >| < #DIGIT : [ "0"-"9" ] >}void file() :{}{  (< IMPORT > < IDENTIFIER > < END >)* program()}void program() :{}{  < PROGRAM >
   {
-    SymbolTable.symbolTable.enterScope();  }
+    SymbolTable.symbolTable.enterScope("program");  }
   < IDENTIFIER > < OPEN_CURLY > programDef()
   {
     SymbolTable.symbolTable.leaveScope();  }
@@ -39,7 +39,7 @@ import fhv.semantic.*;public class EG1{  public static void main(String args
     spix = Namelist.nameList.insert(token.image);
     symbol = new Symbol(spix, Symbol.Kind.funcKind);
     SymbolTable.symbolTable.insert(symbol);
-    SymbolTable.symbolTable.enterScope();  }
+    SymbolTable.symbolTable.enterScope(token.image);  }
   < OPEN >
   funcParamList()
   < CLOSE >
@@ -71,14 +71,14 @@ import fhv.semantic.*;public class EG1{  public static void main(String args
   expr()
   < CLOSE >
   {
-    SymbolTable.symbolTable.enterScope();
+    SymbolTable.symbolTable.enterScope("while");
   }
   stat()
   {
     SymbolTable.symbolTable.leaveScope();
   }}void synchronizedStat() :{}{  < SYNCHRONIZED >   < OPEN >   expr()   < CLOSE > 
   {
-    SymbolTable.symbolTable.enterScope();
+    SymbolTable.symbolTable.enterScope("synchronized");
   }  stat()
   {
     SymbolTable.symbolTable.leaveScope();

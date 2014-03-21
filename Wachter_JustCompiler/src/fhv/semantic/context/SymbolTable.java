@@ -7,16 +7,16 @@ public class SymbolTable {
 	public static SymbolTable symbolTable = new SymbolTable();
 
 	private SymbolTable() {
-		curLevel = -1;
-		curScope = new Scope(null, curLevel);
+		curLevel = 0;
+		curScope = new Scope(null, curLevel, "root");
 	}
 
 	private Integer curLevel;
 	private Scope curScope;
 
-	public void enterScope() {
+	public void enterScope(String identifier) {
 		this.curLevel += 1;
-		this.curScope = new Scope(this.curScope, this.curLevel);
+		this.curScope = new Scope(this.curScope, this.curLevel, identifier);
 	}
 
 	public void leaveScope() {

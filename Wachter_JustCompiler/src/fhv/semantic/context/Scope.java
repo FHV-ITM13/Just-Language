@@ -4,13 +4,13 @@ import fhv.ParseException;
 import fhv.semantic.Symbol;
 
 public class Scope {
-	public Scope(Scope outer, Integer level) {
+	public Scope(Scope outer, Integer level, String identifier) {
 		super();
 		this.outer = outer;
 		this.level = level;
+		this.identifier = identifier;
 
 		numberOfLocals = numberOfParams = 0;
-
 		locals = null;
 	}
 
@@ -24,11 +24,13 @@ public class Scope {
 
 	public Symbol locals;
 
+	public String identifier;
+
 	public void insert(Symbol symbol) throws ParseException {
-		if (this.lookup(symbol.spix) != null) {
+		if (this.hasSpix(symbol.spix)) {
 			throw new ParseException("Duplicate definition '"
 					+ Namelist.nameList.getNameOf(symbol.spix) + "' at level "
-					+ this.level);
+					+ this.level + " (in Scope " + this.identifier + ")");
 		}
 		if (symbol.kind.equals(Symbol.Kind.parKind)) {
 			this.numberOfParams += 1;
@@ -43,7 +45,18 @@ public class Scope {
 		}
 	}
 
-	public Symbol lookup(Integer spix) {
+	private boolean hasSpix(Integer spix) {
+		Symbol cur = this.locals;
+		while (cur != null) {
+			if (spix.equals(cur.spix)) {
+				return true;
+			}
+			cur = cur.next;
+		}
+		return false;
+	}
+
+	public Symbol lookup(Integer spix) throws ParseException {
 		Symbol cur = this.locals;
 		while (cur != null) {
 			if (spix.equals(cur.spix)) {
@@ -51,6 +64,8 @@ public class Scope {
 			}
 			cur = cur.next;
 		}
-		return null;
+		throw new ParseException("Name not defined '"
+				+ Namelist.nameList.getNameOf(spix) + "' at level "
+				+ this.level + " (in Scope '" + this.identifier + "')");
 	}
 }

@@ -27,9 +27,9 @@ public class Namelist {
 		}
 	}
 
-	public Integer lookup(String name) throws ParseException {
+	public Integer lookup(String name) {
 		if (!spixs.containsKey(name)) {
-			throw new ParseException("Name " + name + " not defined");
+			insert(name);
 		}
 		return spixs.get(name);
 	}

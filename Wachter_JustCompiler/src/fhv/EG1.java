@@ -61,7 +61,7 @@ public class EG1 implements EG1Constants {
 
   static final public void program() throws ParseException {
     jj_consume_token(PROGRAM);
-    SymbolTable.symbolTable.enterScope();
+    SymbolTable.symbolTable.enterScope("program");
     jj_consume_token(IDENTIFIER);
     jj_consume_token(OPEN_CURLY);
     programDef();
@@ -137,7 +137,7 @@ public class EG1 implements EG1Constants {
     spix = Namelist.nameList.insert(token.image);
     symbol = new Symbol(spix, Symbol.Kind.funcKind);
     SymbolTable.symbolTable.insert(symbol);
-    SymbolTable.symbolTable.enterScope();
+    SymbolTable.symbolTable.enterScope(token.image);
     jj_consume_token(OPEN);
     funcParamList();
     jj_consume_token(CLOSE);
@@ -335,7 +335,7 @@ public class EG1 implements EG1Constants {
     jj_consume_token(OPEN);
     expr();
     jj_consume_token(CLOSE);
-    SymbolTable.symbolTable.enterScope();
+    SymbolTable.symbolTable.enterScope("while");
     stat();
     SymbolTable.symbolTable.leaveScope();
   }
@@ -345,7 +345,7 @@ public class EG1 implements EG1Constants {
     jj_consume_token(OPEN);
     expr();
     jj_consume_token(CLOSE);
-    SymbolTable.symbolTable.enterScope();
+    SymbolTable.symbolTable.enterScope("synchronized");
     stat();
     SymbolTable.symbolTable.leaveScope();
   }

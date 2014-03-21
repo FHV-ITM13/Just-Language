@@ -1,23 +1,55 @@
 /**
  * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
- */options{  JDK_VERSION = "1.5";  static = true;}PARSER_BEGIN(EG1)package just.grammar;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.File;
+ */
+options
+{
+  JDK_VERSION = "1.5";
+  static = true;
+}
 
-public class EG1{  public static void main(String args []) throws ParseException  {
-    FileInputStream fileInput = null;
-	  
-	try {
-	  fileInput = new FileInputStream(new File("res/Code.txt"));
-	} catch (FileNotFoundException e1) {
-	  System.out.println("File not found");
-	  return;
-	}
-	  
-    EG1 parser = new EG1(System.in);
-    while (true)    {      System.out.println("Reading from file...");
-            try      {        switch (EG1.one_line())        {          case 0 :           System.out.println("OK.");          break;          case 1 :           System.out.println("Goodbye.");          break;          default :           break;        }      }      catch (Exception e)      {        System.out.println("NOK.");        System.out.println(e.getMessage());        EG1.ReInit(System.in);      }      catch (Error e)      {        System.out.println("Oops.");        System.out.println(e.getMessage());        break;      }    }  }}PARSER_END(EG1)SKIP :
+PARSER_BEGIN(EG1)
+package just.grammar;
+import java.io.FileInputStream;
+import java.io.File;
+import just.grammar.semantics.*;
+import just.grammar.context.*;
+
+
+public class EG1
+{
+  static SymbolTable symbolTable;
+  
+  public static void main(String args []) throws ParseException
+  {
+    try
+    {
+      EG1 parser = new EG1(new FileInputStream(new File("res/SmallTest.just")));
+
+	  symbolTable = SymbolTable.SymbolTable;
+      
+      System.out.println("Reading from file");
+      parser.readFile();
+      System.out.println("Code is valid!");
+
+      symbolTable.printSymbols();
+    }
+      catch (Exception e)
+      {
+        System.out.println("Exception:");
+        System.out.println(e.getMessage());
+        EG1.ReInit(System.in);
+      }
+      catch (Error e)
+      {
+        System.out.println("Error:");
+        System.out.println(e.getMessage());
+      }
+    }
+  }
+
+PARSER_END(EG1)
+
+SKIP :
 {
   " "
 | "\r"
@@ -27,15 +59,25 @@ public class EG1{  public static void main(String args []) throws ParseExcepti
 
 TOKEN : /* OPERATORS */
 {
-  < PLUS : "+" >
-| < MINUS : "-" >
-| < MULTIPLY : "*" >
-| < DIVIDE : "/" >
+  	< PLUS : "+" >
+| 	< MINUS : "-" >
+| 	< MULTIPLY : "*" >
+|	< DIVIDE : "/" >
+|	< ASSIGN : "=" >
+| 	< AND : "&&" >
+| 	< OR : "||" >
+| 	< EQ : "==" >
+| 	< NOTEQ : "!=" >
+| 	< SMALLER : "<" >
+| 	< SMALLEREQ : "<=" >
+| 	< GREATER : ">" >
+| 	< GREATEREQ : ">=" >
+| 	< NOT : "!" >
 }
 
-TOKEN : /* NUMBERS */
+TOKEN : /* NUMBER */
 {
-  < CONSTANT : (< DIGIT >)+ >
+  < NUMBER : (< DIGIT >)+ >
 | < #DIGIT : [ "0"-"9" ] >
 }
 
@@ -44,29 +86,280 @@ TOKEN: /* TYPES */
 	< INT : "int" >
 |	< VOID : "void" >
 |	< BOOLEAN : "boolean" >
+|	< ARRAY : ( < RECTBRACKETOPEN > < RECTBRACKETCLOSE > ) >
 }
 
-TOKEN: /* program */
+TOKEN: /* KEYWORDS */
 {
 	< PROGRAM : "program" >
+| 	< IF : "if" >
+| 	< ELSE : "else" >
+| 	< WHILE : "while" >
+| 	< RETURN : "return" >
+| 	< BYREF : "byref" >
+| 	< DO : "do" >
+| 	< SYNC : "synchronized" >
+| 	< IMPORT : "import" >
+| 	< COROUTINE : "coroutine" >
+| 	< CALL : "call" >
+|   < NEW : "new" >
+| 	< FUNCTION : "function" >
+}
+
+TOKEN: /* SYMBOLS */
+{
+	< END : ";" >
+|	< SEPERATOR : "," >
+|	< TRUE : "true" >
+|	< FALSE : "false" >
 }
 
 TOKEN: /* brackets */
 {
 	< CURLYBRACKETOPEN : "{" >
 | 	< CURLYBRACKETCLOSE :"}" >
-| 	< BRACKETOPEN : "(" >
-| 	< BRACKETCLOSE : ")" >
+| 	< ROUNDBRACKETOPEN : "(" >
+| 	< ROUNDBRACKETCLOSE : ")" >
+| 	< RECTBRACKETOPEN : "[" >
+| 	< RECTBRACKETCLOSE : "]" >
 }
 
 TOKEN : /* IDENT */
 {
-  < IDENT : (< CHAR >)+ >
-| < #CHAR : [ "a"-"z" ] >
+  < IDENT : < LOWERLETTER > (< LOWERLETTER > | < UPPERLETTER > | < NUMBER >)* >
+| < #LOWERLETTER : [ "a"-"z" ] >
+| < #UPPERLETTER : [ "A"-"Z" ] >
 }
-int one_line() :{}{	< PROGRAM > <IDENT>
-	(	  <CURLYBRACKETOPEN>
-	  <CURLYBRACKETCLOSE> 
+
+void readFile() :
+{}
+{
+  	CompilationUnit()
+}
+
+void CompilationUnit() :
+{}
+{
+  	(< IMPORT ><IDENT ><END >)*  	< PROGRAM > <IDENT> <CURLYBRACKETOPEN> Definition() <CURLYBRACKETCLOSE>
+}
+
+void Definition() :
+{}
+{
+  (
+      VarDef()
+    | FuncDef()
+  )*
+}
+
+void VarDef() :
+{}
+{
+	Type() (< ARRAY >)? < IDENT > ( Init() )? < END >
+}
+
+void Init() :
+{}
+{
+  	< ASSIGN > Expr()
+}
+
+void Type():
+{}
+{
+  (
+	  < VOID >
+	| < INT >
+	| < BOOLEAN >
+  )
+}
+
+void FuncDef():
+{}
+{
+	FuncHead() Block()
+}
+
+void FuncHead():
+{
+	Token token;
+	Symbol symbol;
+}
+{
+	< FUNCTION > (< COROUTINE >)? Type()
+	token = < IDENT >	{
+	  symbol = symbolTable.lookup(token.image); 	}
+	< ROUNDBRACKETOPEN > ( FormParList() )? < ROUNDBRACKETCLOSE >
+}
+
+void FormParList():
+{}
+{
+	( < BYREF > )? Type() < IDENT >
+	(
+	    < SEPERATOR > ( < BYREF > )? Type() < IDENT >
+	)*
+}
+
+void Block() :
+{}
+{
+	< CURLYBRACKETOPEN >
+	(	  
+	  	VarDef() | Stat()
+	)*
+	<CURLYBRACKETCLOSE >
+}
+
+void Stat() :
+{}
+{
+  	  AssignStat()
+	| CallStat()
+	| IfStat()
+	| WhileStat()
+	| ReturnStat()
+	| Block()
+	| < END >
+}
+
+void AssignStat() :
+{
+	
+}
+{
+  	< IDENT > <ASSIGN > Expr() <END >
+}
+
+void CallStat() :
+{}
+{
+  	< CALL > Call() < END >
+}
+
+void Call():
+{}
+{
+	< IDENT > <ROUNDBRACKETOPEN > ( ActParList() )? <ROUNDBRACKETCLOSE > 
+}
+
+void ActParList():
+{}
+{
+	Expr() ( < SEPERATOR > Expr() )*
+}
+
+void IfStat() :
+{}
+{
+	< IF > < ROUNDBRACKETOPEN > Expr() < ROUNDBRACKETCLOSE > < CURLYBRACKETOPEN > Stat() < CURLYBRACKETCLOSE > ( < ELSE > < CURLYBRACKETOPEN > Stat() < CURLYBRACKETCLOSE >)?
+}
+
+void WhileStat() :
+{}
+{
+	< WHILE > <ROUNDBRACKETOPEN > Expr() <ROUNDBRACKETCLOSE > Stat()
+}
+
+void ReturnStat() :
+{}
+{
+  < RETURN > ( Expr() )? < END >
+}
+
+void Expr():
+{}
+{
+	OrExpr()
+}
+
+void OrExpr():
+{}
+{
+	AndExpr()
+	(
+		< OR > AndExpr()
+	)*
+}
+
+void AndExpr():
+{}
+{
+	RelExpr()
+	(
+		< AND > RelExpr()
+	)*
+}
+
+void RelExpr():
+{}
+{
+	SimpleExpr()
+	(
+	  	(
+	  		ComparisonOperators()
+	  	)
+	  	SimpleExpr()
+	)? 
+}
+
+void SimpleExpr():
+{}
+{
+	( PlusMinus() )? Term()
+	(
+		PlusMinus() Term()
+	)*
+}
+
+void PlusMinus():
+{}
+{
+  	< PLUS > | < MINUS >
+}
+
+void Term():
+{}
+{
+	NotFact()
+	(
+	  	MuliplyDivide() NotFact()
+	)*
+}
+
+void NotFact():
+{}
+{
+  	( < NOT > )? Fact()
+}
+
+void Fact():
+{}
+{
+  	(
+		< NUMBER >
+	  | < IDENT >
+	  | CallStat()
+	  | (< ROUNDBRACKETOPEN > Expr()  < ROUNDBRACKETCLOSE >)
+	  | < NEW > Type() < RECTBRACKETOPEN >  <NUMBER > < RECTBRACKETCLOSE >
 	)
-	{	  return 0;
-	}}void sum() :{}{  term()  (    (      < PLUS >    | < MINUS >    )    term()  )*}void term() :{}{  unary()  (    (      < MULTIPLY >    | < DIVIDE >    )    unary()  )*}void unary() :{}{  < MINUS > element()| element()}void element() :{}{  < CONSTANT >| "(" sum() ")"}
+}
+
+void MuliplyDivide():
+{}
+{
+  	< MULTIPLY > | < DIVIDE >
+}
+
+void ComparisonOperators():
+{}
+{
+	(
+  		< EQ >
+	  | < NOTEQ >
+	  | < SMALLER >
+	  | < SMALLEREQ >
+	  | < GREATER >
+	  | < GREATEREQ >
+	)
+}

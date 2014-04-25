@@ -22,5 +22,4 @@ public class Symbol {
 		this.spix = spix;
 		this.kind = kind;
 	}
-	
 }

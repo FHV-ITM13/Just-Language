@@ -1,6 +1,7 @@
 package fhv.semantic.context;
 
 import fhv.ParseException;
+import fhv.semantic.NameList;
 import fhv.semantic.Symbol;
 
 public class SymbolTable {
@@ -26,19 +27,23 @@ public class SymbolTable {
 
 	public void insert(Symbol symbol) throws ParseException {
 		this.curScope.insert(symbol);
-
 	}
 
 	public Symbol lookup(String name) throws ParseException {
 		Scope cur = this.curScope;
-		Integer spix = Namelist.nameList.lookup(name);
+		Integer spix = NameList.nameList.lookup(name);
+		ParseException inner = null;
 		while (cur != null) {
-			Symbol symbol = cur.lookup(spix);
-			if (symbol != null) {
-				return symbol;
+			try{
+				Symbol symbol = cur.lookup(spix);
+				if (symbol != null) {
+					return symbol;
+				}
+			}catch(ParseException ex){
+			if(inner == null){inner = ex;}	
 			}
 			cur = cur.outer;
 		}
-		return null;
+		throw inner;
 	}
 }

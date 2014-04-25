@@ -1,6 +1,5 @@
 package fhv.semantic;
 
-import fhv.semantic.context.Namelist;
 
 public class Type {
 	public enum Kind {
@@ -9,7 +8,7 @@ public class Type {
 
 	private Type(String name, Type.Kind kind) {
 		try {
-			this.spix = Namelist.nameList.insert(name);
+			this.spix = NameList.nameList.insert(name);
 			this.name = name;
 			this.kind = kind;
 		} catch (Exception ex) {

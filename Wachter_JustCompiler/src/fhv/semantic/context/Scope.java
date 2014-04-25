@@ -1,6 +1,7 @@
 package fhv.semantic.context;
 
 import fhv.ParseException;
+import fhv.semantic.NameList;
 import fhv.semantic.Symbol;
 
 public class Scope {
@@ -29,7 +30,7 @@ public class Scope {
 	public void insert(Symbol symbol) throws ParseException {
 		if (this.hasSpix(symbol.spix)) {
 			throw new ParseException("Duplicate definition '"
-					+ Namelist.nameList.getNameOf(symbol.spix) + "' at level "
+					+ NameList.nameList.getNameOf(symbol.spix) + "' at level "
 					+ this.level + " (in Scope " + this.identifier + ")");
 		}
 		if (symbol.kind.equals(Symbol.Kind.parKind)) {
@@ -65,7 +66,7 @@ public class Scope {
 			cur = cur.next;
 		}
 		throw new ParseException("Name not defined '"
-				+ Namelist.nameList.getNameOf(spix) + "' at level "
+				+ NameList.nameList.getNameOf(spix) + "' at level "
 				+ this.level + " (in Scope '" + this.identifier + "')");
 	}
 }

@@ -5,17 +5,23 @@ import fhv.semantic.context.*;
 import fhv.semantic.*;
 
 public class EG1 implements EG1Constants {
+  private static NameList nameList;
+  private static SymbolTable symbolTable;
+
   public static void main(String args [])
   {
+    nameList = NameList.nameList;
+    symbolTable = SymbolTable.symbolTable;
+
     try
         {
-          int s1 = Namelist.nameList.insert("println");
+          int s1 = nameList.insert("println");
           Symbol printlnSymbol = new Symbol(s1, Symbol.Kind.systemFuncKind);
-          int s2 = Namelist.nameList.insert("start");
+          int s2 = nameList.insert("start");
           Symbol startSymbol = new Symbol(s2, Symbol.Kind.systemFuncKind);
 
-          SymbolTable.symbolTable.insert(printlnSymbol);
-          SymbolTable.symbolTable.insert(startSymbol);
+          symbolTable.insert(printlnSymbol);
+          symbolTable.insert(startSymbol);
 
       EG1 parser = new EG1(new FileInputStream("Just/test.just"));
       parser.file();
@@ -61,11 +67,11 @@ public class EG1 implements EG1Constants {
 
   static final public void program() throws ParseException {
     jj_consume_token(PROGRAM);
-    SymbolTable.symbolTable.enterScope("program");
+    symbolTable.enterScope("program");
     jj_consume_token(IDENTIFIER);
     jj_consume_token(OPEN_CURLY);
     programDef();
-    SymbolTable.symbolTable.leaveScope();
+    symbolTable.leaveScope();
     jj_consume_token(CLOSE_CURLY);
   }
 
@@ -134,15 +140,15 @@ public class EG1 implements EG1Constants {
     }
     type();
     token = jj_consume_token(IDENTIFIER);
-    spix = Namelist.nameList.insert(token.image);
+    spix = nameList.insert(token.image);
     symbol = new Symbol(spix, Symbol.Kind.funcKind);
-    SymbolTable.symbolTable.insert(symbol);
-    SymbolTable.symbolTable.enterScope(token.image);
+    symbolTable.insert(symbol);
+    symbolTable.enterScope(token.image);
     jj_consume_token(OPEN);
     funcParamList();
     jj_consume_token(CLOSE);
     block();
-    SymbolTable.symbolTable.leaveScope();
+    symbolTable.leaveScope();
   }
 
   static final public void funcParamList() throws ParseException {
@@ -194,9 +200,9 @@ public class EG1 implements EG1Constants {
   Symbol symbol;
     type();
     token = jj_consume_token(IDENTIFIER);
-    spix = Namelist.nameList.insert(token.image);
+    spix = nameList.insert(token.image);
     symbol = new Symbol(spix, Symbol.Kind.parKind);
-    SymbolTable.symbolTable.insert(symbol);
+    symbolTable.insert(symbol);
   }
 
   static final public void varDef() throws ParseException {
@@ -214,9 +220,9 @@ public class EG1 implements EG1Constants {
       ;
     }
     token = jj_consume_token(IDENTIFIER);
-    spix = Namelist.nameList.insert(token.image);
+    spix = nameList.insert(token.image);
     symbol = new Symbol(spix, Symbol.Kind.varKind);
-    SymbolTable.symbolTable.insert(symbol);
+    symbolTable.insert(symbol);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case ASSIGN:
       jj_consume_token(ASSIGN);
@@ -335,9 +341,9 @@ public class EG1 implements EG1Constants {
     jj_consume_token(OPEN);
     expr();
     jj_consume_token(CLOSE);
-    SymbolTable.symbolTable.enterScope("while");
+    symbolTable.enterScope("while");
     stat();
-    SymbolTable.symbolTable.leaveScope();
+    symbolTable.leaveScope();
   }
 
   static final public void synchronizedStat() throws ParseException {
@@ -345,9 +351,9 @@ public class EG1 implements EG1Constants {
     jj_consume_token(OPEN);
     expr();
     jj_consume_token(CLOSE);
-    SymbolTable.symbolTable.enterScope("synchronized");
+    symbolTable.enterScope("synchronized");
     stat();
-    SymbolTable.symbolTable.leaveScope();
+    symbolTable.leaveScope();
   }
 
   static final public void returnStat() throws ParseException {
@@ -614,7 +620,7 @@ public class EG1 implements EG1Constants {
   Token token;
   Symbol symbol;
     token = jj_consume_token(IDENTIFIER);
-    symbol = SymbolTable.symbolTable.lookup(token.image);
+    symbol = symbolTable.lookup(token.image);
     label_10:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {

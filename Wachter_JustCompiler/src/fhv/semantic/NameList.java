@@ -1,4 +1,4 @@
-package fhv.semantic.context;
+package fhv.semantic;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,10 +6,10 @@ import java.util.List;
 
 import fhv.ParseException;
 
-public class Namelist {
-	public static Namelist nameList = new Namelist();
+public class NameList {
+	public static NameList nameList = new NameList();
 
-	private Namelist() {
+	private NameList() {
 	}
 
 	private HashMap<String, Integer> spixs = new HashMap<>();

@@ -1,15 +1,17 @@
 package fhv.semantic.context;
 
+import fhv.ParseException;
+import fhv.semantic.NameList;
 import fhv.semantic.Symbol;
 
 public class Scope {
-	public Scope(Scope outer, Integer level) {
+	public Scope(Scope outer, Integer level, String identifier) {
 		super();
 		this.outer = outer;
 		this.level = level;
+		this.identifier = identifier;
 
 		numberOfLocals = numberOfParams = 0;
-
 		locals = null;
 	}
 
@@ -23,17 +25,39 @@ public class Scope {
 
 	public Symbol locals;
 
-	public void insert(Symbol symbol) {
-		if (symbol.type.equals(Symbol.Kind.parKind)) {
+	public String identifier;
+
+	public void insert(Symbol symbol) throws ParseException {
+		if (this.hasSpix(symbol.spix)) {
+			throw new ParseException("Duplicate definition '"
+					+ NameList.nameList.getNameOf(symbol.spix) + "' at level "
+					+ this.level + " (in Scope " + this.identifier + ")");
+		}
+		if (symbol.kind.equals(Symbol.Kind.parKind)) {
 			this.numberOfParams += 1;
-		} else if (symbol.type.equals(Symbol.Kind.varKind)) {
+		} else if (symbol.kind.equals(Symbol.Kind.varKind)) {
 			this.numberOfLocals += 1;
 		}
 
-		locals.insert(symbol, this.level);
+		if (locals == null) {
+			locals = symbol;
+		} else {
+			locals.insert(symbol, this.level);
+		}
 	}
 
-	public Symbol lookup(Integer spix) {
+	private boolean hasSpix(Integer spix) {
+		Symbol cur = this.locals;
+		while (cur != null) {
+			if (spix.equals(cur.spix)) {
+				return true;
+			}
+			cur = cur.next;
+		}
+		return false;
+	}
+
+	public Symbol lookup(Integer spix) throws ParseException {
 		Symbol cur = this.locals;
 		while (cur != null) {
 			if (spix.equals(cur.spix)) {
@@ -41,6 +65,8 @@ public class Scope {
 			}
 			cur = cur.next;
 		}
-		return null;
+		throw new ParseException("Name not defined '"
+				+ NameList.nameList.getNameOf(spix) + "' at level "
+				+ this.level + " (in Scope '" + this.identifier + "')");
 	}
 }

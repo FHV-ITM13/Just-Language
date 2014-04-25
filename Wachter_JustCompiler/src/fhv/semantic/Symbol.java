@@ -2,7 +2,7 @@ package fhv.semantic;
 
 public class Symbol {
 	public enum Kind {
-		undefKind, constKind, varKind, parKind, funcKind
+		undefKind, constKind, varKind, parKind, funcKind, systemFuncKind
 	};
 
 	// naming

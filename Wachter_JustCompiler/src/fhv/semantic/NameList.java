@@ -1,28 +1,36 @@
-package fhv.semantic.context;
+package fhv.semantic;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class Namelist {
-	public static Namelist nameList = new Namelist();
+import fhv.ParseException;
 
-	private Namelist() {
+public class NameList {
+	public static NameList nameList = new NameList();
+
+	private NameList() {
 	}
 
 	private HashMap<String, Integer> spixs = new HashMap<>();
 
 	private List<String> names = new ArrayList<>();
 
-	public Integer insert(String name) throws Exception {
-		if (names.contains(name)) {
-			throw new Exception("Duplicate Name");
+	public Integer insert(String name) {
+		if (spixs.containsKey(name)) {
+			return spixs.get(name);
+		} else {
+			names.add(name);
+			Integer spix = names.size() - 1;
+			spixs.put(name, spix);
+			return spix;
 		}
-		names.add(name);
-		return names.size() - 1;
 	}
 
 	public Integer lookup(String name) {
+		if (!spixs.containsKey(name)) {
+			insert(name);
+		}
 		return spixs.get(name);
 	}
 

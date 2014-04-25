@@ -1,24 +1,30 @@
 package just.grammar.semantics;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+
 import just.grammar.context.Namelist;
 import just.grammar.context.Scope;
 import just.grammar.semantics.Symbol.Kind;
 
 public class SymbolTable {
 	public static SymbolTable SymbolTable = new SymbolTable();
-
+	private LinkedList<Scope> scopes = new LinkedList<Scope>();
+	
 	private int curLevel;
 	private Scope currScope;
 
 	public SymbolTable() {
 		curLevel = 0;
 		currScope = new Scope();
+		scopes.add(currScope);
 	}
 
 	public void enterScope() {
 		++this.curLevel;
 
 		currScope = new Scope(currScope, curLevel);
+		scopes.add(currScope);		
 	}
 
 	public void leaveScope() {
@@ -57,11 +63,21 @@ public class SymbolTable {
 	}
 	
 	public void printSymbols() {
-		Symbol curr = currScope.locals;
+		for (Iterator<Scope> iter : scopes.iterator()) {
+			
+		}
 		
-		while(curr != null) {
-		    System.out.println(curr.spix + " - " + Namelist.NameList.nameOf(curr.spix));
-		    curr = curr.next;
+	}
+	
+	private void printSymbolsCore(Symbol sy) {			
+		while(sy != null) {
+		    System.out.println("Spix:" + sy.spix + " - " + Namelist.NameList.nameOf(sy.spix) + " - Level: " + sy.level);
+		    
+		    if(sy.symbols != null) {
+		    	printSymbolsCore(sy.symbols);
+		    }
+		    
+		    sy = sy.next;
 		}
 	}
 }

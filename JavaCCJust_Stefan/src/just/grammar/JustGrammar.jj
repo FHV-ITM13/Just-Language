@@ -153,9 +153,14 @@ void Definition() :
 }
 
 void VarDef() :
-{}
 {
-	Type() (< ARRAY >)? < IDENT > ( Init() )? < END >
+	Token token;
+	Symbol symbol;
+}
+{
+	Type() (< ARRAY >)? token = < IDENT >	{
+	  symbol = symbolTable.lookup(token.image); 	}
+	( Init() )? < END >
 }
 
 void Init() :
@@ -205,10 +210,14 @@ void Block() :
 {}
 {
 	< CURLYBRACKETOPEN >
-	(	  
+	{		symbolTable.enterScope();
+	}
+	(
 	  	VarDef() | Stat()
 	)*
 	<CURLYBRACKETCLOSE >
+	{		symbolTable.leaveScope();
+	}
 }
 
 void Stat() :

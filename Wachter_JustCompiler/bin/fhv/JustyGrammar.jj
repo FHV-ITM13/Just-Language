@@ -98,9 +98,14 @@ public class EG1{
   {
     symbol = symbolTable.lookup(token.image);  }  (    // ARRAY
     (      < OPEN_RECT >      (        var()      | < NUMBER >      )      < CLOSE_RECT >    )    // sub var
+<<<<<<< HEAD
+  |    (      < POINT >       var()    )  )*}void actParamList() :{}{  (    expr()    (      < SEPERATOR > expr()    )*  )?}
+
+=======
   |    (      subVar()    )  )*}
 
 void subVar():{}{
   < POINT > 
   < IDENTIFIER >}void actParamList() :{}{  (    expr()    (      < SEPERATOR > expr()    )*  )?}
 
+>>>>>>> 6a15ae7e2ebfd69c08950b57854e0cc16fe3246b

@@ -34,6 +34,8 @@ program EmJavaPrg {
 		var int i = 0; 
  		while (i < values.length) { 
  			call println(values[i]); 
- 		} 
+ 		}
+ 		
+ 		i=i+1;
  	} 
 }

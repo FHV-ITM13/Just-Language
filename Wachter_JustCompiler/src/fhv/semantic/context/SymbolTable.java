@@ -40,7 +40,7 @@ public class SymbolTable {
 					return symbol;
 				}
 			}catch(ParseException ex){
-			if(inner == null){inner = ex;}	
+				if(inner == null){inner = ex;}	
 			}
 			cur = cur.outer;
 		}

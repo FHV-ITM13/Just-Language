@@ -184,7 +184,7 @@ public class XMLClassWriter {
 
 		case "void":
 			return "V";
-
+			
 		default:
 			return "I";
 

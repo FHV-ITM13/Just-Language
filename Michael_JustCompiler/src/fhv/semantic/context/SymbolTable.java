@@ -46,4 +46,12 @@ public class SymbolTable {
 		}
 		throw inner;
 	}
+	
+	public boolean isCurrentScopeProgram(){
+		if(this.curScope.outer.identifier.equals("root")) {
+			return true;
+		}
+		
+		return false;
+	}
 }

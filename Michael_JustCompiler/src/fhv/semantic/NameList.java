@@ -26,10 +26,12 @@ public class NameList {
 	}
 
 	public Integer lookup(String name) {
-		if (!spixs.containsKey(name)) {
-			insert(name);
+		if (spixs.containsKey(name)) {
+			return spixs.get(name);
+		} else {
+			return -1;
 		}
-		return spixs.get(name);
+		
 	}
 
 	public String getNameOf(Integer spix) {

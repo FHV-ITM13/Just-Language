@@ -1,553 +1,15 @@
 /**
  * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
- */
-options
-{
-  JDK_VERSION = "1.5";
-
-  static = true;
-}
-
-PARSER_BEGIN(EG1)
-package fhv;
-import java.io.*;
-import fhv.codegenerator.*;
-import fhv.semantic.context.*;
-import fhv.semantic.*;
-
-public class EG1
-{
-  private static NameList nameList;
-  private static SymbolTable symbolTable;
-  private static CodeGenerator codeGenerator;
-  
-  public static void main(String args [])
-  {
-    nameList = NameList.nameList;
-    symbolTable = SymbolTable.symbolTable;
-    codeGenerator = CodeGenerator.codeGenerator;
-    
-    try
-	{
-	  
-	  int s1 = nameList.insert("println");
+ */options{  JDK_VERSION = "1.5";  static = true;}PARSER_BEGIN(EG1)package fhv;import java.io.*;import fhv.codegenerator.*;import fhv.semantic.context.*;import fhv.semantic.*;public class EG1{  private static NameList nameList;  private static SymbolTable symbolTable;  private static CodeGenerator codeGenerator;  public static void main(String args [])  {    String path = "Just/";    String filename = "smalltest.just";    nameList = NameList.nameList;    symbolTable = SymbolTable.symbolTable;    codeGenerator = new CodeGenerator(filename);    try    {      // remove these - just use custom functions
+      /* int s1 = nameList.insert("println");
 	  Symbol printlnSymbol = new Symbol(s1, Symbol.Kind.systemFuncKind);
-
-	  int programSpix = nameList.insert("program");
-	  Symbol programSy = new Symbol(programSpix, Symbol.Kind.systemFuncKind);
-	  symbolTable.insert(programSy);
-
+*/      int programSpix = nameList.insert("program");      Symbol programSy = new Symbol(programSpix, Symbol.Kind.systemFuncKind);      symbolTable.insert(programSy);      /*
 	  int s2 = nameList.insert("start");
 	  Symbol startSymbol = new Symbol(s2, Symbol.Kind.systemFuncKind);
 	  
 	  symbolTable.insert(printlnSymbol);
 	  symbolTable.insert(startSymbol);
-
-      EG1 parser = new EG1(new FileInputStream("Just/smalltest.just"));
-      parser.file();
-      System.out.println("OK.");
-
-      codeGenerator.buildFile();
-    }
-    catch (ParseException e)
-    {
-      System.out.println("NOK.");
-      System.out.println(e.getMessage());
-      EG1.ReInit(System.in);
-    }
-    catch (Error e)
-    {
-      System.out.println("Oops.");
-      System.out.println(e.getMessage());
-    }
-    catch (Exception e)
-    {
-      System.out.println("Other oops.");
-      System.out.println(e.getMessage());
-
-      e.printStackTrace();
-    }
-  }
-}
-
-PARSER_END(EG1)
-
-SKIP :
-{
-  " "
-| "\r"
-| "\t"
-| "\n"
-}
-
-TOKEN : /* OPERATORS */
-{
-  < PLUS : "+" >
-| < MINUS : "-" >
-| < MULTIPLY : "*" >
-| < DIVIDE : "/" >
-}
-
-TOKEN : /*  */
-{
-  < PROGRAM : "program" >
-| < VAR : "var" >
-| < CALL : "call" >
-| < IMPORT : "import" >
-| < RETURN : "return" >
-| < BYREF : "byref" >
-| < COROUTINE : "coroutine" >
-| < SYNCHRONIZED : "synchronized" >
-| < NEW : "new" >
-| < POINT : "." >
-| < TRUE : "true" >
-| < FALSE : "false" >
-| < END : ";" >
-| < SEPERATOR : "," >
-}
-
-TOKEN :
-{
-  < OR : "||" >
-| < AND : "&&" >
-}
-
-TOKEN : /* BRACES */
-{
-  < OPEN_CURLY : "{" >
-| < CLOSE_CURLY : "}" >
-| < OPEN : "(" >
-| < CLOSE : ")" >
-| < OPEN_RECT : "[" >
-| < CLOSE_RECT : "]" >
-}
-
-TOKEN :
-{
-  < EQUAL : "==" >
-| < NOT_EQUAL : "!=" >
-| < SMALLER : "<" >
-| < GREATOR : ">" >
-| < SMALLER_EQUAL : "<=" >
-| < GREATOR_EQUAL : ">=" >
-| < NOT : "|" >
-}
-
-TOKEN : /* TYPES */
-{
-  < INT : "int" >
-| < BOOL : "boolean" >
-| < VOID : "void" >
-| < ARRAY : (< OPEN_RECT > < CLOSE_RECT >) >
-}
-
-TOKEN : /* IF */
-{
-  < IF : "if" >
-| < ELSE : "else" >
-}
-
-TOKEN : /* WHILE */
-{
-  < DO : "do" >
-| < WHILE : "while" >
-}
-
-TOKEN : /* ASSIGN OPERATORS */
-{
-  < ASSIGN : "=" >
-}
-
-TOKEN : /* Identifier */
-{
-  < IDENTIFIER :
-    (
-      < LOWER_LETTER >
-    | < UPPER_LETTER >
-    )
-    (
-      < LOWER_LETTER >
-    | < UPPER_LETTER >
-    | < NUMBER >
-    )* 
-    >
-| < #LOWER_LETTER : [ "a"-"z" ] >
-| < #UPPER_LETTER : [ "A"-"Z" ] >
-}
-
-TOKEN : /* Number */
-{
-  < NUMBER : (< DIGIT >)+ >
-| < #DIGIT : [ "0"-"9" ] >
-}
-
-void file() :
-{}
-{
-  (< IMPORT > < IDENTIFIER > < END >)* program()
-}
-
-void program() :
-{}
-{
-  < PROGRAM >
-  {
-    symbolTable.enterScope("program");
-	codeGenerator.addConstantClass(nameList.lookup("programm"),-1);    
-  }
-  < IDENTIFIER > < OPEN_CURLY > programDef()
-  {
-    symbolTable.leaveScope();
-  }
-  < CLOSE_CURLY >
-}
-
-void programDef() :
-{}
-{
-  (
-    varDef()
-  | funcDef()
-  )*
-}
-
-void type() :
-{}
-{
-  (
-    < VOID >
-  | < INT >
-  | < BOOL >
-  )
-}
-
-void funcDef() :
-{
-  Token token;
-  Symbol symbol;
-  Integer spix;
-}
-{
-  (< COROUTINE >)?
-  type()
-  token=< IDENTIFIER >
-  {
-    spix = nameList.insert(token.image);
-    symbol = new Symbol(spix, Symbol.Kind.funcKind);
-    symbolTable.insert(symbol);
-    symbolTable.enterScope(token.image);
-  }
-  < OPEN >
-  funcParamList()
-  < CLOSE >
-  block()
-  {
-    symbolTable.leaveScope();
-  }
-}
-
-void funcParamList() :
-{
-}
-{
-  (
-    (< BYREF >
-    )? funcParam()
-    (
-      < SEPERATOR > 
-      (
-      < BYREF >
-      )? funcParam()
-    )*
-  )?
-}
-
-void funcParam() :
-{
-  Token token;
-  Integer spix;
-  Symbol symbol;
-}
-{
-  type()
-  token=< IDENTIFIER >
-  {
-    spix = nameList.insert(token.image);
-    symbol = new Symbol(spix, Symbol.Kind.parKind);
-    symbolTable.insert(symbol);
-  }
-}
-
-void varDef() :
-{
-  Token token;
-  Integer spix;
-  Symbol symbol;
-}
-{
-  < VAR > 
-  type() 
-  (< ARRAY >
-  )? 
-  token = < IDENTIFIER >
-  {
-    spix = nameList.insert(token.image);
-    symbol = new Symbol(spix, Symbol.Kind.varKind);
-    symbolTable.insert(symbol); 
-  }
-  (
-    < ASSIGN > 
-    expr()
-  )?
-  < END >
-}
-
-void block() :
-{}
-{
-  < OPEN_CURLY >
-  (
-    varDef()
-  | stat()
-  )*
-  < CLOSE_CURLY >
-}
-
-void stat() :
-{}
-{
-  block()
-| assignStat()
-| ifStat()
-| callStat()
-| whileStat()
-| synchronizedStat()
-| returnStat()
-}
-
-
-void assignStat() :
-{}
-{
-  var() < ASSIGN > expr() < END >
-}
-
-void callStat() :
-{}
-{
-  < CALL > call() < END >
-}
-
-void ifStat() :
-{}
-{
-  < IF > < OPEN > expr() < CLOSE > stat()
-  (
-    < ELSE > stat()
-  )?
-}
-
-void whileStat() :
-{}
-{
-  < WHILE >
-  < OPEN >
-  expr()
-  < CLOSE >
-  {
-    symbolTable.enterScope("while");
-  }
-  stat()
-  {
-    symbolTable.leaveScope();
-  }
-}
-
-void synchronizedStat() :
-{}
-{
-  < SYNCHRONIZED > 
-  < OPEN > 
-  expr() 
-  < CLOSE > 
-  {
-    symbolTable.enterScope("synchronized");
-  }
-  stat()
-  {
-    symbolTable.leaveScope();
-  }
-}
-
-void returnStat() :
-{}
-{
-  < RETURN >
-  (
-    expr()
-  )?
-  < END >
-}
-
-void call() :
-{}
-{
-  var() < OPEN > actParamList() < CLOSE >
-}
-
-void expr() :
-{}
-{
-  orExpr()
-}
-
-void orExpr() :
-{}
-{
-  andExpr()
-  (
-    < OR > andExpr()
-  )*
-}
-
-void andExpr() :
-{}
-{
-  relExpr()
-  (
-    < AND > relExpr()
-  )*
-}
-
-void relExpr() :
-{}
-{
-  simpleExpr()
-  (
-    comparisonOperator() 
-    simpleExpr()
-  )*
-}
-
-void comparisonOperator() :
-{}
-{
-  < EQUAL >
-| < NOT_EQUAL >
-| < SMALLER >
-| < GREATOR >
-| < SMALLER_EQUAL >
-| < GREATOR_EQUAL >
-}
-
-void simpleExpr() :
-{}
-{
-  (
-    < PLUS >
-  | < MINUS >
-  )?
-  term()
-  (
-    (
-      < PLUS >
-    | < MINUS >
-    )
-    term()
-  )*
-}
-
-void term() :
-{}
-{
-  notFactor()
-  (
-    (
-      < MULTIPLY >
-    | < DIVIDE >
-    )
-    notFactor()
-  )*
-}
-
-void notFactor() :
-{}
-{
-  (
-  < NOT >
-  )?
-  factor()
-}
-
-void factor() :
-{}
-{
-  < NUMBER >
-| var()
-| callStat()
-|
-  (
-    < OPEN > expr() < CLOSE >
-  )
-|
-  (
-    < NEW > 
-    type()
-    (
-      < OPEN_RECT >
-      (
-        var()
-      | < NUMBER >
-      )
-      < CLOSE_RECT >
-    )?
-  )
-| < TRUE >
-| < FALSE >
-}
-
-void var() :
-{
-  Token token;
-  Symbol symbol;
-}
-{
-  token = < IDENTIFIER >
-  {
-    symbol = symbolTable.lookup(token.image);
-  }
-  (
-    // ARRAY
-    (
-      < OPEN_RECT >
-      (
-        var()
-      | < NUMBER >
-      )
-      < CLOSE_RECT >
-    )
-    // sub var
-  |
-    (
-      subVar()
-    )
-  )*
-}
-
-void subVar():
-{}
-{
-  < POINT > 
-  < IDENTIFIER >
-}
-
-void actParamList() :
-{}
-{
-  (
-    expr()
-    (
-      < SEPERATOR > expr()
-    )*
-  )?
-}
+*/      EG1 parser = new EG1(new FileInputStream(path + filename));      parser.file();      System.out.println("OK.");      codeGenerator.buildFile();    }    catch (ParseException e)    {      System.out.println("NOK.");      System.out.println(e.getMessage());      EG1.ReInit(System.in);    }    catch (Error e)    {      System.out.println("Oops.");      System.out.println(e.getMessage());    }    catch (Exception e)    {      System.out.println("Other oops.");      System.out.println(e.getMessage());      e.printStackTrace();    }  }}PARSER_END(EG1)SKIP :{  " "| "\r"| "\t"| "\n"}TOKEN : /* OPERATORS */{  < PLUS : "+" >| < MINUS : "-" >| < MULTIPLY : "*" >| < DIVIDE : "/" >}TOKEN : /*  */{  < PROGRAM : "program" >| < VAR : "var" >| < CALL : "call" >| < IMPORT : "import" >| < RETURN : "return" >| < BYREF : "byref" >| < COROUTINE : "coroutine" >| < SYNCHRONIZED : "synchronized" >| < NEW : "new" >| < POINT : "." >| < TRUE : "true" >| < FALSE : "false" >| < END : ";" >| < SEPERATOR : "," >}TOKEN :{  < OR : "||" >| < AND : "&&" >}TOKEN : /* BRACES */{  < OPEN_CURLY : "{" >| < CLOSE_CURLY : "}" >| < OPEN : "(" >| < CLOSE : ")" >| < OPEN_RECT : "[" >| < CLOSE_RECT : "]" >}TOKEN :{  < EQUAL : "==" >| < NOT_EQUAL : "!=" >| < SMALLER : "<" >| < GREATOR : ">" >| < SMALLER_EQUAL : "<=" >| < GREATOR_EQUAL : ">=" >| < NOT : "|" >}TOKEN : /* TYPES */{  < INT : "int" >| < BOOL : "boolean" >| < VOID : "void" >| < ARRAY : (< OPEN_RECT > < CLOSE_RECT >) >}TOKEN : /* IF */{  < IF : "if" >| < ELSE : "else" >}TOKEN : /* WHILE */{  < DO : "do" >| < WHILE : "while" >}TOKEN : /* ASSIGN OPERATORS */{  < ASSIGN : "=" >}TOKEN : /* Identifier */{  < IDENTIFIER :    (      < LOWER_LETTER >    | < UPPER_LETTER >    )    (      < LOWER_LETTER >    | < UPPER_LETTER >    | < NUMBER >    )*     >| < #LOWER_LETTER : [ "a"-"z" ] >| < #UPPER_LETTER : [ "A"-"Z" ] >}TOKEN : /* Number */{  < NUMBER : (< DIGIT >)+ >| < #DIGIT : [ "0"-"9" ] >}void file() :{}{  (< IMPORT > < IDENTIFIER > < END >)* program()}void program() :{  Token token;}{  < PROGRAM >  {    symbolTable.enterScope("program");    codeGenerator.addConstant(nameList.lookup("program"), "-1", CodeGenerator.ConstantType.CLAZZ);    //FIXME mark for fixup index for classname    
+  }  token = < IDENTIFIER >  {    codeGenerator.addConstant(nameList.insert(token.image), token.image, CodeGenerator.ConstantType.UTF8);    // add code constant?  }  < OPEN_CURLY > programDef()  {    symbolTable.leaveScope();  }  < CLOSE_CURLY >}void programDef() :{}{  (    varDef()  | funcDef()  )*}void type() :{}{  (    token = < VOID >  | token = < INT >  | token = < BOOL >  )  {    codeGenerator.addConstant(nameList.insert(token.image), token.image, CodeGenerator.ConstantType.DATATYPE);  }}void funcDef() :{  Token token;  Symbol symbol;  Integer spix;}{  (< COROUTINE >)?   type()   token = < IDENTIFIER >  {    spix = nameList.insert(token.image);    symbol = new Symbol(spix, Symbol.Kind.funcKind);    symbolTable.insert(symbol);    symbolTable.enterScope(token.image);  }  < OPEN >   funcParamList()   < CLOSE >   block()  {    symbolTable.leaveScope();  }}void funcParamList() :{}{  (    (< BYREF >    )? funcParam()    (      < SEPERATOR >       (      < BYREF >      )? funcParam()    )*  )?}void funcParam() :{  Token token;  Integer spix;  Symbol symbol;}{  type()   token = < IDENTIFIER >  {    spix = nameList.insert(token.image);    symbol = new Symbol(spix, Symbol.Kind.parKind);    symbolTable.insert(symbol);  }}void varDef() :{  Token token;  Integer spix;  Symbol symbol;}{  < VAR >   type()   (< ARRAY >  )?   token = < IDENTIFIER >  {    spix = nameList.insert(token.image);    symbol = new Symbol(spix, Symbol.Kind.varKind);    symbolTable.insert(symbol);  }  (    < ASSIGN >     expr()  )?  < END >}void block() :{}{  < OPEN_CURLY >  (    varDef()  | stat()  )*  < CLOSE_CURLY >}void stat() :{}{  block()| assignStat()| ifStat()| callStat()| whileStat()| synchronizedStat()| returnStat()}void assignStat() :{}{  var() < ASSIGN > expr() < END >}void callStat() :{}{  < CALL > call() < END >}void ifStat() :{}{  < IF > < OPEN > expr() < CLOSE > stat()  (    < ELSE > stat()  )?}void whileStat() :{}{  < WHILE >   < OPEN >   expr()   < CLOSE >  {    symbolTable.enterScope("while");  }  stat()  {    symbolTable.leaveScope();  }}void synchronizedStat() :{}{  < SYNCHRONIZED >   < OPEN >   expr()   < CLOSE >  {    symbolTable.enterScope("synchronized");  }  stat()  {    symbolTable.leaveScope();  }}void returnStat() :{}{  < RETURN >  (    expr()  )?  < END >}void call() :{}{  var() < OPEN > actParamList() < CLOSE >}void expr() :{}{  orExpr()}void orExpr() :{}{  andExpr()  (    < OR > andExpr()  )*}void andExpr() :{}{  relExpr()  (    < AND > relExpr()  )*}void relExpr() :{}{  simpleExpr()  (    comparisonOperator()     simpleExpr()  )*}void comparisonOperator() :{}{  < EQUAL >| < NOT_EQUAL >| < SMALLER >| < GREATOR >| < SMALLER_EQUAL >| < GREATOR_EQUAL >}void simpleExpr() :{}{  (    < PLUS >  | < MINUS >  )?  term()  (    (      < PLUS >    | < MINUS >    )    term()  )*}void term() :{}{  notFactor()  (    (      < MULTIPLY >    | < DIVIDE >    )    notFactor()  )*}void notFactor() :{}{  (  < NOT >  )?   factor()}void factor() :{}{  < NUMBER >| var()| callStat()|  (    < OPEN > expr() < CLOSE >  )|  (    < NEW >     type()    (      < OPEN_RECT >      (        var()      | < NUMBER >      )      < CLOSE_RECT >    )?  )| < TRUE >| < FALSE >}void var() :{  Token token;  Symbol symbol;}{  token = < IDENTIFIER >  {    symbol = symbolTable.lookup(token.image);  }  (    // ARRAY
+    (      < OPEN_RECT >      (        var()      | < NUMBER >      )      < CLOSE_RECT >    )    // sub var
+  |    (      subVar()    )  )*}void subVar() :{}{  < POINT >   < IDENTIFIER >}void actParamList() :{}{  (    expr()    (      < SEPERATOR > expr()    )*  )?}

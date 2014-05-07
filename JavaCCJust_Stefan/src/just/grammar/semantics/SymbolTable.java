@@ -1,6 +1,5 @@
 package just.grammar.semantics;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import just.grammar.context.Namelist;
@@ -16,14 +15,14 @@ public class SymbolTable {
 
 	public SymbolTable() {
 		curLevel = 0;
-		currScope = new Scope();
+		currScope = new Scope("program");
 		scopes.add(currScope);
 	}
 
-	public void enterScope() {
+	public void enterScope(String name) {
 		++this.curLevel;
 
-		currScope = new Scope(currScope, curLevel);
+		currScope = new Scope(currScope, curLevel, name);
 		scopes.add(currScope);		
 	}
 
@@ -42,17 +41,14 @@ public class SymbolTable {
 		Integer spix = Namelist.NameList.spixOf(name);
 		
 		if(spix != null) {
-			Symbol curr = currScope.locals;
+			Symbol scopeSymbol = findSymbolInScopeTree(spix);
 			
-			while(curr != null) {
-				if(spix.equals(curr.spix)) {
-					return curr;
-				}
-				
-				curr = curr.next;
+			if(scopeSymbol != null) {	
+				System.out.println("INFO: SymbolTable lookup: " + name + " exists in this or upper scope!");
+				return scopeSymbol;
 			}
 			
-			return null; //should never happen!
+			System.err.println("WARNING: SymbolTable lookup: " + name + " not in current scope but in NameList!");
 		}
 				
 		Integer newSpix = Namelist.NameList.insert(name);
@@ -62,22 +58,43 @@ public class SymbolTable {
 		return newSymbol;
 	}
 	
-	public void printSymbols() {
-		for (Iterator<Scope> iter : scopes.iterator()) {
-			
+	private Symbol findSymbolInScopeTree(Integer spix) {
+		Scope scope = currScope;
+		
+		while(scope != null) {
+			Symbol curr = scope.locals;
+
+			while(curr != null) {
+				if(spix.equals(curr.spix)) {
+					return curr;
+				}
+				
+				curr = curr.next;
+			}
+		
+			scope = scope.outer;
 		}
 		
+		return null;
+	}
+
+	public void printScopes() {		
+		for (Scope scope : scopes) {
+			System.out.println("Level " + scope.level + ": " + scope.name);
+			printSymbols(scope.locals);
+		}
 	}
 	
-	private void printSymbolsCore(Symbol sy) {			
-		while(sy != null) {
-		    System.out.println("Spix:" + sy.spix + " - " + Namelist.NameList.nameOf(sy.spix) + " - Level: " + sy.level);
-		    
-		    if(sy.symbols != null) {
-		    	printSymbolsCore(sy.symbols);
-		    }
-		    
-		    sy = sy.next;
+	private void printSymbols(Symbol sy) {		
+		if(sy == null) {
+			System.err.println("WARNING: PrintSymbols: Symbol null - are there any Symbols in this Scope?");
+			return;
+		}
+		
+		System.out.println("Spix:" + sy.spix + " - " + Namelist.NameList.nameOf(sy.spix) + " - Type:" + sy.type + " - Kind: " + sy.kind);
+
+		if (sy.next != null) {
+			printSymbols(sy.next);
 		}
 	}
 }

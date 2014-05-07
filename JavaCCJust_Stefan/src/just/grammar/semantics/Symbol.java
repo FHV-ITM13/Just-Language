@@ -14,7 +14,6 @@ public class Symbol {
 	// for functions only
 	public boolean defined; // is func already defined
 	public Symbol symbols; // params and loc vars
-	public int level; // scope level
 	public Symbol next; // linear list of symbols within a scope
 	
 	

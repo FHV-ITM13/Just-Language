@@ -11,7 +11,10 @@ PARSER_BEGIN(EG1)
 package just.grammar;
 import java.io.FileInputStream;
 import java.io.File;
-import just.grammar.semantics.*;
+import just.grammar.semantics.Type;
+import just.grammar.semantics.SymbolTable;
+import just.grammar.semantics.Symbol;
+import just.grammar.semantics.Symbol.Kind;
 import just.grammar.context.*;
 
 
@@ -31,7 +34,7 @@ public class EG1
       parser.readFile();
       System.out.println("Code is valid!");
 
-      symbolTable.printSymbols();
+      symbolTable.printScopes();
     }
       catch (Exception e)
       {
@@ -154,12 +157,15 @@ void Definition() :
 
 void VarDef() :
 {
+  	Type type;
 	Token token;
 	Symbol symbol;
 }
 {
-	Type() (< ARRAY >)? token = < IDENT >	{
-	  symbol = symbolTable.lookup(token.image); 	}
+	type = Type() (< ARRAY >)? token = < IDENT >	{
+	  symbol = symbolTable.lookup(token.image);
+	  symbol.type = type;
+	  symbol.kind = Kind.varKind;	}
 	( Init() )? < END >
 }
 
@@ -169,13 +175,21 @@ void Init() :
   	< ASSIGN > Expr()
 }
 
-void Type():
-{}
+Type Type():
+{
+}
 {
   (
-	  < VOID >
-	| < INT >
+	< VOID >	{		return Type.voidType;
+	}
+	|  < INT >
+	{
+		return Type.intType;
+	}
 	| < BOOLEAN >
+	{
+		return Type.boolType;
+	}
   )
 }
 
@@ -187,22 +201,42 @@ void FuncDef():
 
 void FuncHead():
 {
-	Token token;
+  	Type type;
+	Token identToken;
 	Symbol symbol;
 }
 {
-	< FUNCTION > (< COROUTINE >)? Type()
-	token = < IDENT >	{
-	  symbol = symbolTable.lookup(token.image); 	}
+	< FUNCTION > (< COROUTINE >)? type = Type()
+	identToken = < IDENT >	{
+	  symbol = symbolTable.lookup(identToken.image);
+	  symbol.kind = Kind.funcKind;
+	  symbol.type = type;
+	  symbolTable.enterScope(identToken.image);	}
 	< ROUNDBRACKETOPEN > ( FormParList() )? < ROUNDBRACKETCLOSE >
 }
 
 void FormParList():
-{}
 {
-	( < BYREF > )? Type() < IDENT >
+  	Type type;
+	Token token;
+	Symbol symbol;
+}
+{
+	( < BYREF > )? type = Type()
+	token = < IDENT >
+	{
+	  symbol = symbolTable.lookup(token.image);
+	  symbol.type = type;
+	  symbol.kind = Kind.parKind;
+	}
 	(
-	    < SEPERATOR > ( < BYREF > )? Type() < IDENT >
+	    < SEPERATOR > ( < BYREF > )? type = Type()
+	    token = < IDENT >
+		{
+		  symbol = symbolTable.lookup(token.image);
+		  symbol.type = type;
+	  	  symbol.kind = Kind.parKind;
+		}
 	)*
 }
 
@@ -210,8 +244,6 @@ void Block() :
 {}
 {
 	< CURLYBRACKETOPEN >
-	{		symbolTable.enterScope();
-	}
 	(
 	  	VarDef() | Stat()
 	)*
@@ -261,13 +293,46 @@ void ActParList():
 void IfStat() :
 {}
 {
-	< IF > < ROUNDBRACKETOPEN > Expr() < ROUNDBRACKETCLOSE > < CURLYBRACKETOPEN > Stat() < CURLYBRACKETCLOSE > ( < ELSE > < CURLYBRACKETOPEN > Stat() < CURLYBRACKETCLOSE >)?
+	< IF > < ROUNDBRACKETOPEN >	 Expr() < ROUNDBRACKETCLOSE >
+	< CURLYBRACKETOPEN >
+	{
+	  symbolTable.enterScope("if");
+	}
+	 Stat()
+	< CURLYBRACKETCLOSE >
+	{
+	  symbolTable.leaveScope();
+	}
+	(
+	  < ELSE >
+	  < CURLYBRACKETOPEN >
+	  {
+	  	symbolTable.enterScope("else");
+	  }
+		
+	  Stat()
+
+	   < CURLYBRACKETCLOSE >
+		{
+		  symbolTable.leaveScope();
+		}
+	 )?
 }
 
 void WhileStat() :
 {}
 {
-	< WHILE > <ROUNDBRACKETOPEN > Expr() <ROUNDBRACKETCLOSE > Stat()
+	< WHILE > <ROUNDBRACKETOPEN > Expr() <ROUNDBRACKETCLOSE >
+	< CURLYBRACKETOPEN >
+	{
+	  symbolTable.enterScope("while");
+	}
+		Stat()
+		
+	< CURLYBRACKETCLOSE >
+	{
+	  symbolTable.leaveScope();
+	}
 }
 
 void ReturnStat() :

@@ -8,13 +8,16 @@ public class Scope {
 	public int level;
 	public int nrOfParams;
 	public int nrOfLocals;
+	public String name;
 
 	public Symbol locals;
 
-	public Scope() {
+	public Scope(String name) {
+		this.name = name;
 	}
 
-	public Scope(Scope outer, int level) {
+	public Scope(Scope outer, int level, String name) {
+		this(name);
 		this.outer = outer;
 		this.level = level;
 	}

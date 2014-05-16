@@ -1,0 +1,14 @@
+
+program ATest {
+	var int global;
+
+	int doIt(int i) {
+		return i;
+	}
+	
+	void main() {
+		var int a;
+   		a = call doIt(10);
+   		global = a;
+   	}
+}

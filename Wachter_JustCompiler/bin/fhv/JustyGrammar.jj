@@ -34,7 +34,7 @@ public class EG1
 	  symbolTable.insert(printlnSymbol);
 	  symbolTable.insert(startSymbol);
 
-      EG1 parser = new EG1(new FileInputStream("Just/test.just"));
+      EG1 parser = new EG1(new FileInputStream("Just/ATest.jus"));
       parser.file();
       System.out.println("OK.");
     }
@@ -323,8 +323,12 @@ void assignStat() :
 void callStat() :
 {}
 {
-  < CALL > call() < END >
+  simpleCallStat() < END >
 }
+
+void simpleCallStat():
+{}{
+  < CALL > call()}
 
 void ifStat() :
 {}
@@ -472,7 +476,7 @@ void factor() :
 {
   < NUMBER >
 | var()
-| callStat()
+| simpleCallStat()
 |
   (
     < OPEN > expr() < CLOSE >

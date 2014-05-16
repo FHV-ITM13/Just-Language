@@ -23,7 +23,7 @@ public class EG1 implements EG1Constants {
           symbolTable.insert(printlnSymbol);
           symbolTable.insert(startSymbol);
 
-      EG1 parser = new EG1(new FileInputStream("Just/test.just"));
+      EG1 parser = new EG1(new FileInputStream("Just/ATest.jus"));
       parser.file();
       System.out.println("OK.");
     }
@@ -314,9 +314,13 @@ public class EG1 implements EG1Constants {
   }
 
   static final public void callStat() throws ParseException {
+    simpleCallStat();
+    jj_consume_token(END);
+  }
+
+  static final public void simpleCallStat() throws ParseException {
     jj_consume_token(CALL);
     call();
-    jj_consume_token(END);
   }
 
   static final public void ifStat() throws ParseException {
@@ -571,7 +575,7 @@ public class EG1 implements EG1Constants {
       var();
       break;
     case CALL:
-      callStat();
+      simpleCallStat();
       break;
     case OPEN:
       jj_consume_token(OPEN);

@@ -10,8 +10,9 @@ public class Scope {
 	private String identifier;
 	private Symbol locals;
 	private NameList nameList;
-	
-	public Scope(Scope outer, Integer level, NameList nameList, String identifier) {
+
+	public Scope(Scope outer, Integer level, NameList nameList,
+			String identifier) {
 		super();
 		this.outer = outer;
 		this.level = level;
@@ -20,18 +21,26 @@ public class Scope {
 
 		numberOfLocals = numberOfParams = 0;
 	}
-	
+
 	public Scope getOuter() {
 		return outer;
+	}
+
+	public Integer getNumberOfLocals() {
+		return numberOfLocals;
+	}
+
+	public Integer getNumberOfParams() {
+		return numberOfParams;
 	}
 
 	public void insert(Symbol symbol) throws ParseException {
 		if (this.hasSymbol(symbol.getId())) {
 			throw new ParseException("Duplicate definition '"
-					+ symbol.getName() + "' at level "
-					+ this.level + " (in Scope " + this.identifier + ")");
+					+ symbol.getName() + "' at level " + this.level
+					+ " (in Scope " + this.identifier + ")");
 		}
-		
+
 		if (symbol.getKind().equals(Kind.paramKind)) {
 			this.numberOfParams += 1;
 		} else if (symbol.getKind().equals(Kind.varKind)) {
@@ -65,7 +74,7 @@ public class Scope {
 			cur = cur.getNext();
 		}
 		throw new ParseException("Name not defined '"
-				+ this.nameList.getNameOf(id) + "' at level "
-				+ this.level + " (in Scope '" + this.identifier + "')");
+				+ this.nameList.getNameOf(id) + "' at level " + this.level
+				+ " (in Scope '" + this.identifier + "')");
 	}
 }

@@ -11,6 +11,7 @@ import org.w3c.dom.*;
 
 import fhv.classfile.ClassFile;
 import fhv.classfile.Field;
+import fhv.classfile.Method;
 import fhv.classfile.constant.Constant;
 
 public class XmlWriter {
@@ -35,7 +36,7 @@ public class XmlWriter {
 
 			for (Constant constant : classFile.getConstantPool().values()) {
 				Element e = constant.writeXml(doc);
-				rootElement.appendChild(e);
+				constantPool.appendChild(e);
 			}
 
 			Element thisClass = doc.createElement("this_class");
@@ -45,18 +46,20 @@ public class XmlWriter {
 			rootElement.appendChild(thisClass);
 
 			Element fieldInfo = doc.createElement("field_info");
+			rootElement.appendChild(fieldInfo);
+			
 			for (Field field : classFile.getFields()) {
 				Element e = field.writeXml(doc);
 				fieldInfo.appendChild(e);
 			}
 
-			rootElement.appendChild(fieldInfo);
-
 			Element methodInfo = doc.createElement("method_info");
-			methodInfo
-					.appendChild(doc.createComment("TODO append method info"));
-
 			rootElement.appendChild(methodInfo);
+
+			for (Method method : classFile.getMethods()) {
+				Element e = method.writeXml(doc);
+				methodInfo.appendChild(e);
+			}
 
 			// output DOM XML to console
 			TransformerFactory transformerFactory = TransformerFactory

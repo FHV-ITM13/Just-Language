@@ -138,17 +138,18 @@ public class Justy implements JustyConstants {
   Type type;
   MethodSymbol s;
   Constant funcConstant;
+  Scope scope;
     type = type();
     token = jj_consume_token(IDENTIFIER);
     s = (MethodSymbol) nameList.insert(token.image, Kind.methodKind);
     s.setType(type);
 
     symbolTable.insert(s);
-    symbolTable.enterScope(token.image);
+    scope = symbolTable.enterScope(token.image);
     jj_consume_token(OPEN);
     funcParamList(s);
     jj_consume_token(CLOSE);
-    funcConstant = classFile.addMethodConstant(s);
+    funcConstant = classFile.addMethodConstant(s, scope);
     block();
     symbolTable.leaveScope();
   }

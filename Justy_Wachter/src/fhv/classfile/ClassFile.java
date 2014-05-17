@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import fhv.classfile.attribute.CodeAttribute;
 import fhv.classfile.constant.ClassConstant;
 import fhv.classfile.constant.Constant;
 import fhv.classfile.constant.FieldRefConstant;
@@ -13,6 +14,7 @@ import fhv.classfile.constant.UTF8Constant;
 import fhv.classfile.output.XmlWriter;
 import fhv.symbol.Kind;
 import fhv.symbol.MethodSymbol;
+import fhv.symbol.Scope;
 import fhv.symbol.Symbol;
 
 public class ClassFile {
@@ -21,6 +23,7 @@ public class ClassFile {
 	private UTF8Constant codeConstant;
 
 	private List<Field> fields;
+	private List<Method> methods;
 
 	private String magic = "classfile";
 	private String minor = "0";
@@ -29,6 +32,7 @@ public class ClassFile {
 	public ClassFile() {
 		this.constantPool = new HashMap<>();
 		this.fields = new ArrayList<>();
+		this.methods = new ArrayList<>();
 
 		this.codeConstant = (UTF8Constant) this.addConstant(new UTF8Constant(
 				"Code"));
@@ -40,6 +44,10 @@ public class ClassFile {
 
 	public List<Field> getFields() {
 		return fields;
+	}
+
+	public List<Method> getMethods() {
+		return methods;
 	}
 
 	public String getMagic() {
@@ -110,7 +118,7 @@ public class ClassFile {
 		return null;
 	}
 
-	public Constant addMethodConstant(MethodSymbol s) {
+	public Constant addMethodConstant(MethodSymbol s, Scope scope) {
 		String typeString = String.format("(%s)%s", s.getParamTypes(), s
 				.getType().getShortName());
 
@@ -120,11 +128,15 @@ public class ClassFile {
 		Constant nameAndTypeConstant = this
 				.addConstant(new NameAndTypeConstant(name, type));
 
-		Constant constant = this.addConstant(new MethodRefConstant(
-				this.classConstant, (NameAndTypeConstant) nameAndTypeConstant));
+		MethodRefConstant constant = (MethodRefConstant) this
+				.addConstant(new MethodRefConstant(this.classConstant,
+						(NameAndTypeConstant) nameAndTypeConstant));
 
-		// TODO init new method
-
+		Method m = new Method(constant);
+		this.methods.add(m);
+		m.addAttribute(new CodeAttribute(this.codeConstant, scope));
+		constant.setMethod(m);
+		
 		return constant;
 	}
 

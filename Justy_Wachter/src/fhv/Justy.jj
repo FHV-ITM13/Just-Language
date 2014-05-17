@@ -186,7 +186,8 @@ Constant varDef(Kind kind):{
 void funcDef():{
   Type type;
   MethodSymbol s;
-  Constant funcConstant;}{
+  Constant funcConstant;
+  Scope scope;}{
   type = type()
   token = < IDENTIFIER >
   {
@@ -194,12 +195,12 @@ void funcDef():{
     s.setType(type);
     
     symbolTable.insert(s);
-    symbolTable.enterScope(token.image);  }
+    scope = symbolTable.enterScope(token.image);  }
   < OPEN >
   funcParamList(s)
   < CLOSE >
   {
-    funcConstant = classFile.addMethodConstant(s);  }
+    funcConstant = classFile.addMethodConstant(s, scope);  }
   block()
   {
     symbolTable.leaveScope();  }}

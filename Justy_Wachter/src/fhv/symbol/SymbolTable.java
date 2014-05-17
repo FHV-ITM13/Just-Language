@@ -14,9 +14,11 @@ public class SymbolTable {
 		this.nameList = nameList;
 	}
 
-	public void enterScope(String identifier) {
+	public Scope enterScope(String identifier) {
 		this.curLevel += 1;
 		this.curScope = new Scope(this.curScope, this.curLevel, nameList, identifier);
+		
+		return this.curScope;
 	}
 
 	public void leaveScope() {

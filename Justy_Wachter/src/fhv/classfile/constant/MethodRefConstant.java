@@ -4,10 +4,14 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import fhv.classfile.Method;
+
 public class MethodRefConstant extends Constant {
 	private ClassConstant classIndex;
 
 	private NameAndTypeConstant nameAndType;
+
+	private Method method;
 
 	public MethodRefConstant(ClassConstant classIndex) {
 		this.classIndex = classIndex;
@@ -27,6 +31,14 @@ public class MethodRefConstant extends Constant {
 		return nameAndType;
 	}
 
+	public Method getMethod() {
+		return method;
+	}
+
+	public void setMethod(Method method) {
+		this.method = method;
+	}
+
 	@Override
 	public boolean isCompleted() {
 		return nameAndType != null;
@@ -44,7 +56,7 @@ public class MethodRefConstant extends Constant {
 
 		element.appendChild(clazz);
 		element.appendChild(nt);
-		
+
 		return element;
 	}
 }

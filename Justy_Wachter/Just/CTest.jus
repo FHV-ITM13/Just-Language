@@ -1,14 +1,13 @@
-
 program CTest {
-	int doIt(int i) {
-		return (i + global) * 10;
-	}
-	
 	void main() {
 		var int a;
    		a = call doIt(10);
    		global = a;
    	}
+   	
+	int doIt(int i) {
+		return (i + global) * 10;
+	}
 
 	var int global;
 }

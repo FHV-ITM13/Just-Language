@@ -18,7 +18,7 @@ import fhv.classfile.constant.*;
     symbolTable = new SymbolTable(nameList);
     classFile = new ClassFile();
     codeGen = new CodeGenerator();
-        try    {      Justy parser = new Justy(new FileInputStream("Just/BTest.jus"));      parser.file();      System.out.println("OK.");
+        try    {      Justy parser = new Justy(new FileInputStream("Just/CTest.jus"));      parser.file();      System.out.println("OK.");
       classFile.write("Just/BTest.jl");    }    catch (ParseException e)    {      System.out.println("NOK.");      System.out.println(e.getMessage());      Justy.ReInit(System.in);    }    catch (Error e)    {      System.out.println("Oops.");      System.out.println(e.getMessage());      e.printStackTrace();    }    catch (Exception e)    {      System.out.println("Other oops.");      System.out.println(e.getMessage());      e.printStackTrace();    }  }}PARSER_END(Justy)
 SKIP :
 {
@@ -277,14 +277,119 @@ void returnStat():
     codeGen.emit(Opcode.IRETURN);  }
   < END >}
 
+void expr() :
+{
+}
+{
+  orExpr()
+}
 
+void orExpr() :
+{}
+{
+  andExpr()
+  (
+    < OR >
+    andExpr()
+    {
+      codeGen.emit(Opcode.IOR);
+    }
+  )*
+}
 
+void andExpr() :
+{}
+{
+  relExpr()
+  (
+    < AND >
+    relExpr()    {
+      codeGen.emit(Opcode.IAND);    }
+  )*
+}
 
+void relExpr() :
+{}
+{
+  simpleExpr()
+  (
+    comparisonOperator() 
+    simpleExpr()
+  )*
+}
 
+void comparisonOperator() :
+{  // TODO comparison 
+}
+{
+  < EQUAL >
+| < NOT_EQUAL >
+| < SMALLER >
+| < GREATOR >
+| < SMALLER_EQUAL >
+| < GREATOR_EQUAL >
+}
 
+void simpleExpr() :
+{
+  Opcode code;
+}
+{
+  term()
+  (
+    (
+      < PLUS >      {
+        code = Opcode.IADD;      }
+    | < MINUS >
+      {
+        code = Opcode.ISUB;
+      }
+    )
+    term()
+    {
+      codeGen.emit(code);    }
+  )*
+}
 
+void term() :
+{
+  Opcode code;
+}
+{
+  notFactor()
+  (
+    (
+      < MULTIPLY >
+      {
+        code = Opcode.IMUL;
+      }
+    | < DIVIDE >
+      {
+        code = Opcode.IDIV;
+      }
+    )
+    notFactor()
+    {
+      codeGen.emit(code);
+    }
+  )*
+}
 
-void expr():
+void notFactor() :
+{
+  boolean not = false;
+}
+{
+  (
+  < NOT >  {
+    not = true;  }
+  )?
+  factor()  {
+    if(not)    {
+      codeGen.emit(Opcode.INEG);    }  }
+}
+
+void factor():
 {
   Constant constant;
 }
@@ -295,6 +400,10 @@ void expr():
     codeGen.emit2(Opcode.LDC_W, constant.getIndex());  }
 | var(true)
 | simpleCallStat()
+|
+  (
+    < OPEN > expr() < CLOSE >
+  )
 }
 
 Descriptor var(boolean generate):

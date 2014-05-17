@@ -8,5 +8,12 @@ public enum Opcode {
 	PUTSTATIC,
 	RETURN,
 	IRETURN,
-	GETSTATIC
+	GETSTATIC,
+	IADD,
+	ISUB,
+	IMUL,
+	IDIV,
+	IAND,
+	IOR,
+	INEG
 }

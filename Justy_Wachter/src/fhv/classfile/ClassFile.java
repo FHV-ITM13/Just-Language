@@ -11,6 +11,7 @@ import fhv.classfile.constant.FieldRefConstant;
 import fhv.classfile.constant.MethodRefConstant;
 import fhv.classfile.constant.NameAndTypeConstant;
 import fhv.classfile.constant.UTF8Constant;
+import fhv.classfile.constant.ValueConstant;
 import fhv.classfile.output.XmlWriter;
 import fhv.symbol.Kind;
 import fhv.symbol.MethodSymbol;
@@ -70,11 +71,21 @@ public class ClassFile {
 		return this.classConstant;
 	}
 
-	public UTF8Constant getConstant(String name) {
+	public UTF8Constant getUTF8Constant(String name) {
 		for (Constant constant : this.constantPool.values()) {
 			if (constant instanceof UTF8Constant
 					&& ((UTF8Constant) constant).getBytes().equals(name)) {
 				return (UTF8Constant) constant;
+			}
+		}
+		return null;
+	}
+
+	public ValueConstant getValueConstant(String value) {
+		for (Constant constant : this.constantPool.values()) {
+			if (constant instanceof ValueConstant
+					&& ((ValueConstant) constant).getBytes().equals(value)) {
+				return (ValueConstant) constant;
 			}
 		}
 		return null;
@@ -98,6 +109,10 @@ public class ClassFile {
 		return this.addConstant(new ClassConstant(name));
 	}
 
+	public Constant addValueConstant(String value, String type) {
+		return this.addConstant(new ValueConstant(value, type));
+	}
+
 	public Constant addVarConstant(Symbol s) {
 		if (s.getKind().equals(Kind.fieldKind)) {
 			Constant name = this.addNameConstant(s);
@@ -111,9 +126,10 @@ public class ClassFile {
 
 			this.fields.add(new Field((FieldRefConstant) constant));
 
+			s.setAddress(constant.getIndex());
+
 			return constant;
 		}
-		// TODO generate addr and so (fields, param, ... s.kind)
 
 		return null;
 	}
@@ -134,9 +150,13 @@ public class ClassFile {
 
 		Method m = new Method(constant);
 		this.methods.add(m);
-		m.addAttribute(new CodeAttribute(this.codeConstant, scope));
+		CodeAttribute codeAttr = new CodeAttribute(this.codeConstant, scope);
+		m.addAttribute(codeAttr);
+
 		constant.setMethod(m);
-		
+		constant.setCode(codeAttr.getCode());
+		s.setAddress(constant.getIndex());
+
 		return constant;
 	}
 
@@ -146,7 +166,13 @@ public class ClassFile {
 		if (constant instanceof ClassConstant) {
 			this.classConstant = (ClassConstant) constant;
 		} else if (constant instanceof UTF8Constant) {
-			UTF8Constant c = this.getConstant(((UTF8Constant) constant)
+			UTF8Constant c = this.getUTF8Constant(((UTF8Constant) constant)
+					.getBytes());
+			if (c != null) {
+				return c;
+			}
+		} else if (constant instanceof ValueConstant) {
+			ValueConstant c = this.getValueConstant(((ValueConstant) constant)
 					.getBytes());
 			if (c != null) {
 				return c;

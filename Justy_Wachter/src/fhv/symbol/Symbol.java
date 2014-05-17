@@ -10,6 +10,7 @@ public class Symbol {
 	private int scopeLevel;
 	private Type type;
 	private Constant constant;
+	private int address = -1;
 
 	public Symbol(int id, String name, Kind kind) {
 		this.id = id;
@@ -44,13 +45,21 @@ public class Symbol {
 	public int getScopeLevel() {
 		return scopeLevel;
 	}
-	
+
 	public void setConstant(Constant constant) {
 		this.constant = constant;
 	}
-	
+
 	public Constant getConstant() {
 		return constant;
+	}
+
+	public void setAddress(int address) {
+		this.address = address;
+	}
+
+	public int getAddress() {
+		return address;
 	}
 
 	public void insert(Symbol symbol, int scopeLevel) {

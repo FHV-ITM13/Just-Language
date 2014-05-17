@@ -16,9 +16,14 @@ public class SymbolTable {
 
 	public Scope enterScope(String identifier) {
 		this.curLevel += 1;
-		this.curScope = new Scope(this.curScope, this.curLevel, nameList, identifier);
-		
+		this.curScope = new Scope(this.curScope, this.curLevel, nameList,
+				identifier);
+
 		return this.curScope;
+	}
+
+	public Scope getCurScope() {
+		return curScope;
 	}
 
 	public void leaveScope() {
@@ -31,22 +36,8 @@ public class SymbolTable {
 	}
 
 	public Symbol lookup(String name) throws ParseException {
-		Scope cur = this.curScope;
 		Integer id = this.nameList.lookup(name);
-		ParseException inner = null;
-		while (cur != null) {
-			try {
-				Symbol symbol = cur.lookup(id);
-				if (symbol != null) {
-					return symbol;
-				}
-			} catch (ParseException ex) {
-				if (inner == null) {
-					inner = ex;
-				}
-			}
-			cur = cur.getOuter();
-		}
-		throw inner;
+		
+		return this.curScope.lookup(id);
 	}
 }

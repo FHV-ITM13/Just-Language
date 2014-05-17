@@ -5,6 +5,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import fhv.classfile.Method;
+import fhv.code.MethodCode;
 
 public class MethodRefConstant extends Constant {
 	private ClassConstant classIndex;
@@ -12,6 +13,8 @@ public class MethodRefConstant extends Constant {
 	private NameAndTypeConstant nameAndType;
 
 	private Method method;
+
+	private MethodCode code;
 
 	public MethodRefConstant(ClassConstant classIndex) {
 		this.classIndex = classIndex;
@@ -39,6 +42,14 @@ public class MethodRefConstant extends Constant {
 		this.method = method;
 	}
 
+	public MethodCode getCode() {
+		return code;
+	}
+
+	public void setCode(MethodCode code) {
+		this.code = code;
+	}
+
 	@Override
 	public boolean isCompleted() {
 		return nameAndType != null;
@@ -48,6 +59,8 @@ public class MethodRefConstant extends Constant {
 	public Element writeXml(Document doc) {
 		Element element = doc.createElement("constant_methodref");
 		element.setAttribute("id", this.getIndex() + "");
+		element.appendChild(doc.createComment(this.nameAndType.getNameIndex().getBytes() + ": "
+				+ this.nameAndType.getDescriptorIndex().getBytes()));
 
 		Element clazz = doc.createElement("class_index");
 		clazz.appendChild(doc.createTextNode("" + this.classIndex.getIndex()));

@@ -10,6 +10,7 @@ public class Scope {
 	private String identifier;
 	private Symbol locals;
 	private NameList nameList;
+	private int localAddr;
 
 	public Scope(Scope outer, Integer level, NameList nameList,
 			String identifier) {
@@ -19,7 +20,7 @@ public class Scope {
 		this.identifier = identifier;
 		this.nameList = nameList;
 
-		numberOfLocals = numberOfParams = 0;
+		localAddr = numberOfLocals = numberOfParams = 0;
 	}
 
 	public Scope getOuter() {
@@ -43,8 +44,12 @@ public class Scope {
 
 		if (symbol.getKind().equals(Kind.paramKind)) {
 			this.numberOfParams += 1;
-		} else if (symbol.getKind().equals(Kind.varKind)) {
+			symbol.setAddress(this.localAddr);
+			this.localAddr += 1;
+		} else if (symbol.getKind().equals(Kind.localKind)) {
 			this.numberOfLocals += 1;
+			symbol.setAddress(this.localAddr);
+			this.localAddr += 1;
 		}
 
 		if (locals == null) {
@@ -73,8 +78,10 @@ public class Scope {
 			}
 			cur = cur.getNext();
 		}
-		throw new ParseException("Name not defined '"
-				+ this.nameList.getNameOf(id) + "' at level " + this.level
-				+ " (in Scope '" + this.identifier + "')");
+		if (outer != null) {
+			return outer.lookup(id);
+		} else {
+			return null;
+		}
 	}
 }

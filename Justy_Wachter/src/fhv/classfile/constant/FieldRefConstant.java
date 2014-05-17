@@ -40,6 +40,8 @@ public class FieldRefConstant extends Constant {
 	public Element writeXml(Document doc) {
 		Element element = doc.createElement("constant_fieldref");
 		element.setAttribute("id", this.getIndex() + "");
+		element.appendChild(doc.createComment(this.nameAndType.getNameIndex().getBytes() + ": "
+				+ this.nameAndType.getDescriptorIndex().getBytes()));
 
 		Element clazz = doc.createElement("class_index");
 		clazz.appendChild(doc.createTextNode("" + this.classIndex.getIndex()));

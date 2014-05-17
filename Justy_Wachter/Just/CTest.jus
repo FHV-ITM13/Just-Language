@@ -1,14 +1,14 @@
 
-program BTest {
+program CTest {
 	int doIt(int i) {
-		return i;
+		return (i + global) * 10;
 	}
 	
 	void main() {
 		var int a;
    		a = call doIt(10);
    		global = a;
-	}
-	
+   	}
+
 	var int global;
 }

@@ -33,7 +33,11 @@ public class NameList {
 	}
 
 	public Integer lookup(String name) {
-		return ids.get(name);
+		if (ids.containsKey(name)) {
+			return ids.get(name);
+		} else {
+			return this.insert(name, Kind.noneKind).getId();
+		}
 	}
 
 	public String getNameOf(Integer id) {

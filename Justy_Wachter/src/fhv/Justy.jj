@@ -4,16 +4,20 @@
 import java.io.*;
 
 import fhv.symbol.*;
+import fhv.code.*;
+import fhv.code.fixup.*;
 import fhv.classfile.*;
 import fhv.classfile.constant.*;
 public class Justy{
   private static NameList nameList;
   private static SymbolTable symbolTable;
   private static ClassFile classFile;
+  private static CodeGenerator codeGen;
     public static void main(String args []) throws ParseException  {
     nameList = new NameList();
     symbolTable = new SymbolTable(nameList);
     classFile = new ClassFile();
+    codeGen = new CodeGenerator();
         try    {      Justy parser = new Justy(new FileInputStream("Just/BTest.jus"));      parser.file();      System.out.println("OK.");
       classFile.write("Just/BTest.jl");    }    catch (ParseException e)    {      System.out.println("NOK.");      System.out.println(e.getMessage());      Justy.ReInit(System.in);    }    catch (Error e)    {      System.out.println("Oops.");      System.out.println(e.getMessage());      e.printStackTrace();    }    catch (Exception e)    {      System.out.println("Other oops.");      System.out.println(e.getMessage());      e.printStackTrace();    }  }}PARSER_END(Justy)
 SKIP :
@@ -158,7 +162,7 @@ void program():{
   < OPEN_CURLY >
   (
     fieldVarDef()
-  | funcDef()
+  | methodDef()
   )*
   < CLOSE_CURLY >
   {
@@ -170,6 +174,14 @@ void fieldVarDef():{
   constant = varDef(Kind.fieldKind)
   // TODO add assignment (only Constants)
   < END >}
+
+void localVarDef():
+{
+  Constant constant;}{
+  < VAR >
+  constant = varDef(Kind.localKind)
+  // TODO add assignment
+  < END >} 
 
 Constant varDef(Kind kind):{
   Type type;
@@ -183,10 +195,10 @@ Constant varDef(Kind kind):{
     symbolTable.insert(s);
 	return classFile.addVarConstant(s);  }}
 
-void funcDef():{
+void methodDef():{
   Type type;
   MethodSymbol s;
-  Constant funcConstant;
+  MethodRefConstant methodConstant;
   Scope scope;}{
   type = type()
   token = < IDENTIFIER >
@@ -200,7 +212,8 @@ void funcDef():{
   funcParamList(s)
   < CLOSE >
   {
-    funcConstant = classFile.addMethodConstant(s, scope);  }
+    methodConstant = (MethodRefConstant) classFile.addMethodConstant(s, scope);
+    codeGen.setCurrentCode(methodConstant.getCode());  }
   block()
   {
     symbolTable.leaveScope();  }}
@@ -233,5 +246,107 @@ void funcParam(MethodSymbol method):{
 
 void block():{}{
   < OPEN_CURLY >
-
+  (	stat()
+  )*
   < CLOSE_CURLY >}
+
+void stat():
+{
+}
+{
+  localVarDef()
+| assignStat()
+| returnStat()
+}
+
+void assignStat():
+{
+  Descriptor desc;}{
+  desc = var(false)
+  < ASSIGN >
+  expr()
+  {
+    codeGen.save(desc);  }
+  < END >}
+
+void returnStat():
+{}{
+  < RETURN >
+  expr()
+  {
+    codeGen.emit(Opcode.IRETURN);  }
+  < END >}
+
+
+
+
+
+
+
+
+void expr():
+{
+  Constant constant;
+}
+{
+  token = < NUMBER >
+  {
+    constant = classFile.addValueConstant(token.image, "integer");
+    codeGen.emit2(Opcode.LDC_W, constant.getIndex());  }
+| var(true)
+| simpleCallStat()
+}
+
+Descriptor var(boolean generate):
+{
+  Symbol s;
+  Descriptor desc;}{
+  token = < IDENTIFIER >
+  {
+    s = symbolTable.lookup(token.image);
+    if(s==null)    {
+      s = nameList.insert(token.image, Kind.noneKind);
+    }
+    desc = codeGen.getDescriptor(s);
+    
+    if(generate)    {      codeGen.load(desc);
+    }
+    return desc;  }}
+
+void callStat() :
+{}
+{
+  simpleCallStat()
+  < END >
+}
+
+void simpleCallStat():
+{}
+{
+  < CALL >
+  call()
+}
+
+void call() :
+{
+  Descriptor desc;
+}
+{
+  desc = var(false)
+  < OPEN >
+  actParamList()
+  < CLOSE >
+  {
+    codeGen.emit2(Opcode.INVOKESTATIC, new VarAddressFixup(desc, symbolTable.getCurScope()));  }
+}
+
+void actParamList() :
+{}
+{
+  (
+    expr()
+    (
+      < SEPERATOR > expr()
+    )*
+  )?
+}

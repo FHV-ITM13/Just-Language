@@ -2,6 +2,8 @@
 package fhv;
 import java.io.*;
 import fhv.symbol.*;
+import fhv.code.*;
+import fhv.code.fixup.*;
 import fhv.classfile.*;
 import fhv.classfile.constant.*;
 

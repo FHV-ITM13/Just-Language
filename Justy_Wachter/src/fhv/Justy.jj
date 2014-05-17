@@ -1,0 +1,236 @@
+/**
+ * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
+ */options{  JDK_VERSION = "1.5";  static = true;}PARSER_BEGIN(Justy)package fhv;
+import java.io.*;
+
+import fhv.symbol.*;
+import fhv.classfile.*;
+import fhv.classfile.constant.*;
+public class Justy{
+  private static NameList nameList;
+  private static SymbolTable symbolTable;
+  private static ClassFile classFile;
+    public static void main(String args []) throws ParseException  {
+    nameList = new NameList();
+    symbolTable = new SymbolTable(nameList);
+    classFile = new ClassFile();
+        try    {      Justy parser = new Justy(new FileInputStream("Just/BTest.jus"));      parser.file();      System.out.println("OK.");
+      classFile.write("Just/BTest.jl");    }    catch (ParseException e)    {      System.out.println("NOK.");      System.out.println(e.getMessage());      Justy.ReInit(System.in);    }    catch (Error e)    {      System.out.println("Oops.");      System.out.println(e.getMessage());      e.printStackTrace();    }    catch (Exception e)    {      System.out.println("Other oops.");      System.out.println(e.getMessage());      e.printStackTrace();    }  }}PARSER_END(Justy)
+SKIP :
+{
+  " "
+| "\r"
+| "\t"
+| "\n"
+}
+
+TOKEN : /* OPERATORS */
+{
+  < PLUS : "+" >
+| < MINUS : "-" >
+| < MULTIPLY : "*" >
+| < DIVIDE : "/" >
+}
+
+TOKEN : /*  */
+{
+  < PROGRAM : "program" >
+| < VAR : "var" >
+| < CALL : "call" >
+| < IMPORT : "import" >
+| < RETURN : "return" >
+| < BYREF : "byref" >
+| < BYVAL : "byval" >
+| < COROUTINE : "coroutine" >
+| < SYNCHRONIZED : "synchronized" >
+| < NEW : "new" >
+| < POINT : "." >
+| < TRUE : "true" >
+| < FALSE : "false" >
+| < END : ";" >
+| < SEPERATOR : "," >
+}
+
+TOKEN :
+{
+  < OR : "||" >
+| < AND : "&&" >
+}
+
+TOKEN : /* BRACES */
+{
+  < OPEN_CURLY : "{" >
+| < CLOSE_CURLY : "}" >
+| < OPEN : "(" >
+| < CLOSE : ")" >
+| < OPEN_RECT : "[" >
+| < CLOSE_RECT : "]" >
+}
+
+TOKEN :
+{
+  < EQUAL : "==" >
+| < NOT_EQUAL : "!=" >
+| < SMALLER : "<" >
+| < GREATOR : ">" >
+| < SMALLER_EQUAL : "<=" >
+| < GREATOR_EQUAL : ">=" >
+| < NOT : "|" >
+}
+
+TOKEN : /* TYPES */
+{
+  < INT : "int" >
+| < BOOL : "boolean" >
+| < VOID : "void" >
+| < ARRAY : (< OPEN_RECT > < CLOSE_RECT >) >
+}
+
+TOKEN : /* IF */
+{
+  < IF : "if" >
+| < ELSE : "else" >
+}
+
+TOKEN : /* WHILE */
+{
+  < DO : "do" >
+| < WHILE : "while" >
+}
+
+TOKEN : /* ASSIGN OPERATORS */
+{
+  < ASSIGN : "=" >
+}
+
+TOKEN : /* Identifier */
+{
+  < IDENTIFIER :
+    (
+      < LOWER_LETTER >
+    | < UPPER_LETTER >
+    )
+    (
+      < LOWER_LETTER >
+    | < UPPER_LETTER >
+    | < NUMBER >
+    )* 
+    >
+| < #LOWER_LETTER : [ "a"-"z" ] >
+| < #UPPER_LETTER : [ "A"-"Z" ] >
+}
+
+TOKEN : /* Number */
+{
+  < NUMBER : (< DIGIT >)+ >
+| < #DIGIT : [ "0"-"9" ] >
+}
+
+Type type() :
+{
+}
+{
+  (
+    < VOID >    {
+      return Type.Void;    }
+  | < INT >
+    {
+      return Type.Int;
+    }
+  | < BOOL >
+    {
+      return Type.Bool;
+    }
+  )
+}void file() :{}{  program()}
+
+void program():{
+  Symbol s;
+  Constant classConstant;}{
+  < PROGRAM >
+  token = < IDENTIFIER >
+  {
+    s = nameList.insert(token.image, Kind.programKind);
+    symbolTable.insert(s);
+    symbolTable.enterScope("program: " + token.image);
+    
+	classConstant = classFile.addClassConstant(s);  }
+  < OPEN_CURLY >
+  (
+    fieldVarDef()
+  | funcDef()
+  )*
+  < CLOSE_CURLY >
+  {
+    symbolTable.leaveScope();  }}
+
+void fieldVarDef():{
+  Constant constant;}{
+  < VAR >
+  constant = varDef(Kind.fieldKind)
+  // TODO add assignment (only Constants)
+  < END >}
+
+Constant varDef(Kind kind):{
+  Type type;
+  Symbol s;
+  Constant varConstant;}{
+  type = type()
+  token = < IDENTIFIER >
+  {
+    s = nameList.insert(token.image, kind);
+    s.setType(type);
+    symbolTable.insert(s);
+	return classFile.addVarConstant(s);  }}
+
+void funcDef():{
+  Type type;
+  MethodSymbol s;
+  Constant funcConstant;}{
+  type = type()
+  token = < IDENTIFIER >
+  {
+    s = (MethodSymbol) nameList.insert(token.image, Kind.methodKind);
+    s.setType(type);
+    
+    symbolTable.insert(s);
+    symbolTable.enterScope(token.image);  }
+  < OPEN >
+  funcParamList(s)
+  < CLOSE >
+  {
+    funcConstant = classFile.addMethodConstant(s);  }
+  block()
+  {
+    symbolTable.leaveScope();  }}
+
+void funcParamList(MethodSymbol s):{}{
+  (
+    funcParam(s)
+    (
+      < SEPERATOR > 
+      funcParam(s)
+    )*
+  )?}
+
+void funcParam(MethodSymbol method):{
+  Type type;
+  Symbol s;}{
+  (
+    < BYREF >
+  | < BYVAL >
+  )?
+  type = type()
+  token = < IDENTIFIER >
+  {
+    s = nameList.insert(token.image, Kind.paramKind);
+    s.setType(type);
+    symbolTable.insert(s);
+
+	s.setConstant(classFile.addVarConstant(s));
+    method.addParam(s);  }}
+
+void block():{}{
+  < OPEN_CURLY >
+
+  < CLOSE_CURLY >}

@@ -2,16 +2,23 @@
 package fhv;
 import java.io.*;
 import fhv.semantic.context.*;
+import fhv.classfile.*;
+import fhv.classfile.constant.*;
 import fhv.semantic.*;
+import fhv.code.*;
 
 public class EG1 implements EG1Constants {
   private static NameList nameList;
   private static SymbolTable symbolTable;
 
+  private static ClassFile classFile;
+  private static CodeGenerator codeGen;
+
   public static void main(String args [])
   {
     nameList = NameList.nameList;
     symbolTable = SymbolTable.symbolTable;
+    classFile = new ClassFile();
 
     try
         {
@@ -36,7 +43,7 @@ public class EG1 implements EG1Constants {
     catch (Error e)
     {
       System.out.println("Oops.");
-      System.out.println(e.getMessage());
+      System.out.println(e.getMessage());e.printStackTrace();
     }
     catch (Exception e)
     {
@@ -66,12 +73,20 @@ public class EG1 implements EG1Constants {
   }
 
   static final public void program() throws ParseException {
+        ClassConstant classConstant;
+        UTF8Constant nameConstant;
+        Token token;
     jj_consume_token(PROGRAM);
     symbolTable.enterScope("program");
-    jj_consume_token(IDENTIFIER);
+    token = jj_consume_token(IDENTIFIER);
     jj_consume_token(OPEN_CURLY);
     programDef();
     symbolTable.leaveScope();
+    nameConstant = new UTF8Constant(token.image);
+    classConstant = new ClassConstant(nameConstant);
+
+    classFile.addConstant(classConstant);
+    classFile.addConstant(nameConstant);
     jj_consume_token(CLOSE_CURLY);
   }
 
@@ -130,6 +145,10 @@ public class EG1 implements EG1Constants {
   Token token;
   Symbol symbol;
   Integer spix;
+
+  Code code = new Code();
+  Method method;
+  codeGen = new CodeGenerator(code, classFile);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case COROUTINE:
       jj_consume_token(COROUTINE);
@@ -140,6 +159,8 @@ public class EG1 implements EG1Constants {
     }
     type();
     token = jj_consume_token(IDENTIFIER);
+    method = new Method(token.image, code);
+
     spix = nameList.insert(token.image);
     symbol = new Symbol(spix, Symbol.Kind.funcKind);
     symbolTable.insert(symbol);
@@ -149,6 +170,9 @@ public class EG1 implements EG1Constants {
     jj_consume_token(CLOSE);
     block();
     symbolTable.leaveScope();
+
+    // TODO add to classfile
+    codeGen = null;
   }
 
   static final public void funcParamList() throws ParseException {
@@ -662,6 +686,7 @@ public class EG1 implements EG1Constants {
         throw new ParseException();
       }
     }
+    codeGen.load(symbol);
   }
 
   static final public void subVar() throws ParseException {

@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import fhv.ParseException;
-
 public class NameList {
 	public static NameList nameList = new NameList();
 

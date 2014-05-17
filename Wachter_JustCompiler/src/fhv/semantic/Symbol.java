@@ -2,7 +2,7 @@ package fhv.semantic;
 
 public class Symbol {
 	public enum Kind {
-		undefKind, constKind, varKind, parKind, funcKind, systemFuncKind
+		undefKind, constKind, varKind, parKind, funcKind, systemFuncKind, fieldKind
 	};
 
 	// naming
@@ -31,8 +31,11 @@ public class Symbol {
 	}
 
 	public void insert(Symbol symbol, Integer scopeLevel) {
-		this.scopeLevel = scopeLevel;
-		symbol.next = this.next;
-		this.next = symbol;
+		if (this.next != null) {
+			this.next.insert(symbol, scopeLevel);
+		} else {
+			this.next = symbol;
+			symbol.scopeLevel = scopeLevel;
+		}
 	}
 }

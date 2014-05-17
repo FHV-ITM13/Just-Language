@@ -12,17 +12,24 @@ PARSER_BEGIN(EG1)
 package fhv;
 import java.io.*;
 import fhv.semantic.context.*;
+import fhv.classfile.*;
+import fhv.classfile.constant.*;
 import fhv.semantic.*;
+import fhv.code.*;
 
 public class EG1
 {
   private static NameList nameList;
   private static SymbolTable symbolTable;
+
+  private static ClassFile classFile;
+  private static CodeGenerator codeGen;
   
   public static void main(String args [])
   {
     nameList = NameList.nameList;
     symbolTable = SymbolTable.symbolTable;
+    classFile = new ClassFile();
     
     try
 	{
@@ -47,7 +54,7 @@ public class EG1
     catch (Error e)
     {
       System.out.println("Oops.");
-      System.out.println(e.getMessage());
+      System.out.println(e.getMessage());e.printStackTrace();
     }
     catch (Exception e)
     {
@@ -177,15 +184,24 @@ void file() :
 }
 
 void program() :
-{}
+{
+	ClassConstant classConstant;
+	UTF8Constant nameConstant;
+	Token token;
+}
 {
   < PROGRAM >
   {
     symbolTable.enterScope("program");
   }
-  < IDENTIFIER > < OPEN_CURLY > programDef()
+  token = < IDENTIFIER > < OPEN_CURLY > programDef()
   {
     symbolTable.leaveScope();
+    nameConstant = new UTF8Constant(token.image);
+    classConstant = new ClassConstant(nameConstant);
+
+    classFile.addConstant(classConstant);
+    classFile.addConstant(nameConstant);
   }
   < CLOSE_CURLY >
 }
@@ -214,12 +230,18 @@ void funcDef() :
   Token token;
   Symbol symbol;
   Integer spix;
+
+  Code code = new Code();
+  Method method;
+  codeGen = new CodeGenerator(code, classFile);
 }
 {
   (< COROUTINE >)?
   type()
   token=< IDENTIFIER >
   {
+    method = new Method(token.image, code);
+    
     spix = nameList.insert(token.image);
     symbol = new Symbol(spix, Symbol.Kind.funcKind);
     symbolTable.insert(symbol);
@@ -231,6 +253,9 @@ void funcDef() :
   block()
   {
     symbolTable.leaveScope();
+
+    // TODO add to classfile
+    codeGen = null;
   }
 }
 
@@ -274,8 +299,9 @@ void varDef() :
 }
 {
   < VAR > 
-  type() 
-  (< ARRAY >
+  type()
+  (
+    < ARRAY >
   )? 
   token = < IDENTIFIER >
   {
@@ -388,7 +414,8 @@ void call() :
 }
 
 void expr() :
-{}
+{
+}
 {
   orExpr()
 }
@@ -463,7 +490,8 @@ void term() :
 }
 
 void notFactor() :
-{}
+{
+}
 {
   (
   < NOT >
@@ -472,7 +500,8 @@ void notFactor() :
 }
 
 void factor() :
-{}
+{
+}
 {
   < NUMBER >
 | var()
@@ -524,6 +553,9 @@ void var() :
       subVar()
     )
   )*
+
+  {
+    codeGen.load(symbol);  }
 }
 
 void subVar():

@@ -1,0 +1,10 @@
+
+program BTest {
+	var int global;
+
+	int doIt(int i) {
+	}
+	
+	void main() {
+	}
+}

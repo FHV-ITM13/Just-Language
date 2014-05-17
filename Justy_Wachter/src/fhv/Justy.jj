@@ -19,7 +19,7 @@ import fhv.classfile.constant.*;
     classFile = new ClassFile();
     codeGen = new CodeGenerator();
         try    {      Justy parser = new Justy(new FileInputStream("Just/CTest.jus"));      parser.file();      System.out.println("OK.");
-      classFile.write("Just/BTest.jl");    }    catch (ParseException e)    {      System.out.println("NOK.");      System.out.println(e.getMessage());      Justy.ReInit(System.in);    }    catch (Error e)    {      System.out.println("Oops.");      System.out.println(e.getMessage());      e.printStackTrace();    }    catch (Exception e)    {      System.out.println("Other oops.");      System.out.println(e.getMessage());      e.printStackTrace();    }  }}PARSER_END(Justy)
+      classFile.write("Just/output.jl");    }    catch (ParseException e)    {      System.out.println("NOK.");      System.out.println(e.getMessage());      Justy.ReInit(System.in);    }    catch (Error e)    {      System.out.println("Oops.");      System.out.println(e.getMessage());      e.printStackTrace();    }    catch (Exception e)    {      System.out.println("Other oops.");      System.out.println(e.getMessage());      e.printStackTrace();    }  }}PARSER_END(Justy)
 SKIP :
 {
   " "

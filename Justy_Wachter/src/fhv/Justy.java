@@ -27,7 +27,7 @@ public class Justy implements JustyConstants {
       Justy parser = new Justy(new FileInputStream("Just/CTest.jus"));
       parser.file();
       System.out.println("OK.");
-      classFile.write("Just/BTest.jl");
+      classFile.write("Just/output.jl");
     }
     catch (ParseException e)
     {

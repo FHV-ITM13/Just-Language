@@ -1,5 +1,6 @@
 package fhv.classfile.output;
 
+import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import javax.xml.parsers.*;
@@ -47,7 +48,7 @@ public class XmlWriter {
 
 			Element fieldInfo = doc.createElement("field_info");
 			rootElement.appendChild(fieldInfo);
-			
+
 			for (Field field : classFile.getFields()) {
 				Element e = field.writeXml(doc);
 				fieldInfo.appendChild(e);
@@ -74,8 +75,11 @@ public class XmlWriter {
 			transformer.transform(source, result);
 			String xmlString = result.getWriter().toString();
 			System.out.println(xmlString);
-			
-			// TODO write to file
+
+			PrintWriter out = new PrintWriter(fileName);
+			out.println(xmlString);
+			out.flush();
+			out.close();
 
 			System.out.println("\nXML DOM Created Successfully..");
 

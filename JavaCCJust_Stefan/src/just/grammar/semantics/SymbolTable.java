@@ -2,8 +2,6 @@ package just.grammar.semantics;
 
 import java.util.LinkedList;
 
-import just.grammar.context.Namelist;
-import just.grammar.context.Scope;
 import just.grammar.semantics.Symbol.Kind;
 
 public class SymbolTable {
@@ -38,7 +36,7 @@ public class SymbolTable {
 	}
 
 	public Symbol lookup(String name) {
-		Integer spix = Namelist.NameList.spixOf(name);
+		Integer spix = NameList.NameList.spixOf(name);
 		
 		if(spix != null) {
 			Symbol scopeSymbol = findSymbolInScopeTree(spix);
@@ -51,7 +49,7 @@ public class SymbolTable {
 			System.err.println("WARNING: SymbolTable lookup: " + name + " not in current scope but in NameList!");
 		}
 				
-		Integer newSpix = Namelist.NameList.insert(name);
+		Integer newSpix = NameList.NameList.insert(name);
 		Symbol newSymbol = new Symbol(newSpix, Kind.undefKind);
 		insert(newSymbol);
 		
@@ -91,7 +89,7 @@ public class SymbolTable {
 			return;
 		}
 		
-		System.out.println("Spix:" + sy.spix + " - " + Namelist.NameList.nameOf(sy.spix) + " - Type:" + sy.type + " - Kind: " + sy.kind);
+		System.out.println("Spix:" + sy.spix + " - " + NameList.NameList.nameOf(sy.spix) + " - Type:" + sy.type + " - Kind: " + sy.kind);
 
 		if (sy.next != null) {
 			printSymbols(sy.next);

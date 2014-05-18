@@ -1,17 +1,17 @@
-package just.grammar.context;
+package just.grammar.semantics;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Namelist {
-	public static Namelist NameList = new Namelist();
+public class NameList {
+	public static NameList NameList = new NameList();
 	
 	// name -> spix
 	private HashMap<String, Integer> m_nameIndices;
 	// spix -> name
 	private ArrayList<String> m_names;
 	
-	public Namelist() {
+	public NameList() {
 		m_nameIndices = new HashMap<>();
 		m_names = new ArrayList<>();
 	}

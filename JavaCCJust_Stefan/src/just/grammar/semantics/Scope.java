@@ -1,7 +1,7 @@
-package just.grammar.context;
+package just.grammar.semantics;
 
-import just.grammar.semantics.Symbol;
 import just.grammar.semantics.Symbol.Kind;
+
 
 public class Scope {
 	public Scope outer; // no scope is null

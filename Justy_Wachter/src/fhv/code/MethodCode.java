@@ -8,7 +8,7 @@ import fhv.symbol.Scope;
 
 public class MethodCode {
 	private LinkedList<CodeLine> lines = new LinkedList<>();
-
+	private CodeLine last;
 	private Scope scope;
 
 	public MethodCode(Scope scope) {
@@ -19,8 +19,14 @@ public class MethodCode {
 		return scope;
 	}
 
-	public void addLine(CodeLine line) {
+	public CodeLine addLine(CodeLine line) {
 		this.lines.add(line);
+		this.last = line;
+		return line;
+	}
+
+	public CodeLine getLast() {
+		return last;
 	}
 
 	@Override
@@ -33,7 +39,7 @@ public class MethodCode {
 		}
 
 		if (!lines.peekLast().isReturn()) {
-			builder.append(Opcode.RETURN);
+			builder.append(new CodeLine(Opcode.RETURN, new Object[] {}));
 			builder.append('\n');
 		}
 

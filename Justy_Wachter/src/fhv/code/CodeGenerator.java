@@ -11,6 +11,8 @@ public class CodeGenerator {
 
 	private MethodCode curCode;
 
+	private int labelNumber = 1;
+
 	public Descriptor getDescriptor(Symbol s) {
 		return new Descriptor(s);
 	}
@@ -29,27 +31,46 @@ public class CodeGenerator {
 				new VarAddressFixup(desc, this.curCode.getScope()));
 	}
 
-	public void emit(Opcode opCode) {
-		this.curCode.addLine(new CodeLine(opCode, new Object[] {}));
+	public void falseJump(Opcode opCode, IfDescriptor desc) {
+		desc.setLabel(this.createLabel());
+		this.emit2(opCode, desc.getLabel());
 	}
 
-	public void emit2(Opcode opCode, Object op) {
-		this.curCode.addLine(new CodeLine(opCode, new Object[] { op }));
+	public Label createLabel() {
+		return new Label("L" + this.labelNumber++);
 	}
 
-	public void emit2(Opcode opCode, Fixup op) throws ParseException {
+	public void jump(Label label) {
+		this.emit2(Opcode.GOTO, label);
+	}
+
+	public void markByLabel(Label label) {
+		this.emit(Opcode.NOP).setLabel(label);
+	}
+
+	public CodeLine emit(Opcode opCode) {
+		return this.curCode.addLine(new CodeLine(opCode, new Object[] {}));
+	}
+
+	public CodeLine emit2(Opcode opCode, Object op) {
+		return this.curCode.addLine(new CodeLine(opCode, new Object[] { op }));
+	}
+
+	public CodeLine emit2(Opcode opCode, Fixup op) throws ParseException {
 		if (op.fix()) {
-			this.emit2(opCode, op.getOp());
+			return this.emit2(opCode, op.getOp());
 		} else {
-			this.curCode.addLine(new CodeLine(opCode, new Object[] { op }));
+			return this.curCode.addLine(new CodeLine(opCode,
+					new Object[] { op }));
 		}
 	}
 
-	public void emit2(Fixup opCode, Fixup op) throws ParseException {
+	public CodeLine emit2(Fixup opCode, Fixup op) throws ParseException {
 		if (opCode.fix()) {
-			this.emit2((Opcode) opCode.getOp(), op);
+			return this.emit2((Opcode) opCode.getOp(), op);
 		} else {
-			this.curCode.addLine(new CodeLine(opCode, new Object[] { op }));
+			return this.curCode.addLine(new CodeLine(opCode,
+					new Object[] { op }));
 		}
 	}
 }

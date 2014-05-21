@@ -256,7 +256,46 @@ void stat():
 {
   localVarDef()
 | assignStat()
+| ifStat()
 | returnStat()
+}
+
+void ifStat() :
+{
+  IfDescriptor desc = new IfDescriptor();
+  Label endifLabel;
+}
+{
+  < IF >
+  < OPEN >
+  expr()
+  (
+    < EQUAL >
+    expr()
+    {
+      /*  */      codeGen.falseJump(Opcode.IF_ICMPNE, desc);
+    }
+  | < NOT_EQUAL >
+    expr()
+    {
+      codeGen.falseJump(Opcode.IF_ICMPEQ, desc);
+    }  )
+  < CLOSE >
+  block()
+  (
+    < ELSE >
+    {
+	  endifLabel = codeGen.createLabel();
+	  codeGen.jump(endifLabel);
+	  codeGen.markByLabel(desc.getLabel());
+    }
+    block()    {
+  	  codeGen.markByLabel(endifLabel);    }
+  | /* no else */
+    {
+  	  codeGen.markByLabel(desc.getLabel());
+    }
+  )
 }
 
 void assignStat():
@@ -300,34 +339,12 @@ void orExpr() :
 void andExpr() :
 {}
 {
-  relExpr()
-  (
-    < AND >
-    relExpr()    {
-      codeGen.emit(Opcode.IAND);    }
-  )*
-}
-
-void relExpr() :
-{}
-{
   simpleExpr()
   (
-    comparisonOperator() 
-    simpleExpr()
+    < AND >
+    simpleExpr()    {
+      codeGen.emit(Opcode.IAND);    }
   )*
-}
-
-void comparisonOperator() :
-{  // TODO comparison 
-}
-{
-  < EQUAL >
-| < NOT_EQUAL >
-| < SMALLER >
-| < GREATOR >
-| < SMALLER_EQUAL >
-| < GREATOR_EQUAL >
 }
 
 void simpleExpr() :
@@ -400,6 +417,16 @@ void factor():
     codeGen.emit2(Opcode.LDC_W, constant.getIndex());  }
 | var(true)
 | simpleCallStat()
+| < TRUE >
+{
+  constant = classFile.addValueConstant("1", "boolean");
+  codeGen.emit2(Opcode.LDC_W, constant.getIndex());
+}
+| < FALSE >
+{
+  constant = classFile.addValueConstant("0", "boolean");
+  codeGen.emit2(Opcode.LDC_W, constant.getIndex());
+}
 |
   (
     < OPEN > expr() < CLOSE >

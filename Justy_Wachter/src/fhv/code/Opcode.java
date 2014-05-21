@@ -15,5 +15,9 @@ public enum Opcode {
 	IDIV,
 	IAND,
 	IOR,
-	INEG
+	INEG,
+	NOP,
+	GOTO,
+	IF_ICMPNE,
+	IF_ICMPEQ
 }

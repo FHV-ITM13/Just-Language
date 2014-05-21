@@ -234,6 +234,7 @@ public class Justy implements JustyConstants {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case VAR:
       case RETURN:
+      case IF:
       case IDENTIFIER:
         ;
         break;
@@ -254,6 +255,9 @@ public class Justy implements JustyConstants {
     case IDENTIFIER:
       assignStat();
       break;
+    case IF:
+      ifStat();
+      break;
     case RETURN:
       returnStat();
       break;
@@ -261,6 +265,46 @@ public class Justy implements JustyConstants {
       jj_la1[8] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
+    }
+  }
+
+  static final public void ifStat() throws ParseException {
+  IfDescriptor desc = new IfDescriptor();
+  Label endifLabel;
+    jj_consume_token(IF);
+    jj_consume_token(OPEN);
+    expr();
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case EQUAL:
+      jj_consume_token(EQUAL);
+      expr();
+      /*  */
+      codeGen.falseJump(Opcode.IF_ICMPNE, desc);
+      break;
+    case NOT_EQUAL:
+      jj_consume_token(NOT_EQUAL);
+      expr();
+      codeGen.falseJump(Opcode.IF_ICMPEQ, desc);
+      break;
+    default:
+      jj_la1[9] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+    jj_consume_token(CLOSE);
+    block();
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case ELSE:
+      jj_consume_token(ELSE);
+          endifLabel = codeGen.createLabel();
+          codeGen.jump(endifLabel);
+          codeGen.markByLabel(desc.getLabel());
+      block();
+          codeGen.markByLabel(endifLabel);
+      break;
+    default:
+      jj_la1[10] = jj_gen;
+          codeGen.markByLabel(desc.getLabel());
     }
   }
 
@@ -293,7 +337,7 @@ public class Justy implements JustyConstants {
         ;
         break;
       default:
-        jj_la1[9] = jj_gen;
+        jj_la1[11] = jj_gen;
         break label_4;
       }
       jj_consume_token(OR);
@@ -303,7 +347,7 @@ public class Justy implements JustyConstants {
   }
 
   static final public void andExpr() throws ParseException {
-    relExpr();
+    simpleExpr();
     label_5:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -311,68 +355,19 @@ public class Justy implements JustyConstants {
         ;
         break;
       default:
-        jj_la1[10] = jj_gen;
+        jj_la1[12] = jj_gen;
         break label_5;
       }
       jj_consume_token(AND);
-      relExpr();
-      codeGen.emit(Opcode.IAND);
-    }
-  }
-
-  static final public void relExpr() throws ParseException {
-    simpleExpr();
-    label_6:
-    while (true) {
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case EQUAL:
-      case NOT_EQUAL:
-      case SMALLER:
-      case GREATOR:
-      case SMALLER_EQUAL:
-      case GREATOR_EQUAL:
-        ;
-        break;
-      default:
-        jj_la1[11] = jj_gen;
-        break label_6;
-      }
-      comparisonOperator();
       simpleExpr();
-    }
-  }
-
-  static final public void comparisonOperator() throws ParseException {
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case EQUAL:
-      jj_consume_token(EQUAL);
-      break;
-    case NOT_EQUAL:
-      jj_consume_token(NOT_EQUAL);
-      break;
-    case SMALLER:
-      jj_consume_token(SMALLER);
-      break;
-    case GREATOR:
-      jj_consume_token(GREATOR);
-      break;
-    case SMALLER_EQUAL:
-      jj_consume_token(SMALLER_EQUAL);
-      break;
-    case GREATOR_EQUAL:
-      jj_consume_token(GREATOR_EQUAL);
-      break;
-    default:
-      jj_la1[12] = jj_gen;
-      jj_consume_token(-1);
-      throw new ParseException();
+      codeGen.emit(Opcode.IAND);
     }
   }
 
   static final public void simpleExpr() throws ParseException {
   Opcode code;
     term();
-    label_7:
+    label_6:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case PLUS:
@@ -381,7 +376,7 @@ public class Justy implements JustyConstants {
         break;
       default:
         jj_la1[13] = jj_gen;
-        break label_7;
+        break label_6;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case PLUS:
@@ -405,7 +400,7 @@ public class Justy implements JustyConstants {
   static final public void term() throws ParseException {
   Opcode code;
     notFactor();
-    label_8:
+    label_7:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case MULTIPLY:
@@ -414,7 +409,7 @@ public class Justy implements JustyConstants {
         break;
       default:
         jj_la1[15] = jj_gen;
-        break label_8;
+        break label_7;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case MULTIPLY:
@@ -466,6 +461,16 @@ public class Justy implements JustyConstants {
       break;
     case CALL:
       simpleCallStat();
+      break;
+    case TRUE:
+      jj_consume_token(TRUE);
+  constant = classFile.addValueConstant("1", "boolean");
+  codeGen.emit2(Opcode.LDC_W, constant.getIndex());
+      break;
+    case FALSE:
+      jj_consume_token(FALSE);
+  constant = classFile.addValueConstant("0", "boolean");
+  codeGen.emit2(Opcode.LDC_W, constant.getIndex());
       break;
     case OPEN:
       jj_consume_token(OPEN);
@@ -520,12 +525,14 @@ public class Justy implements JustyConstants {
   static final public void actParamList() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case CALL:
+    case TRUE:
+    case FALSE:
     case OPEN:
     case NOT:
     case IDENTIFIER:
     case NUMBER:
       expr();
-      label_9:
+      label_8:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case SEPERATOR:
@@ -533,7 +540,7 @@ public class Justy implements JustyConstants {
           break;
         default:
           jj_la1[19] = jj_gen;
-          break label_9;
+          break label_8;
         }
         jj_consume_token(SEPERATOR);
         expr();
@@ -563,10 +570,10 @@ public class Justy implements JustyConstants {
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x0,0x400,0x400,0x800000,0xc000,0xc000,0xc000,0x2400,0x2400,0x1000000,0x2000000,0x0,0x0,0x60,0x60,0x180,0x180,0x0,0x10000800,0x800000,0x10000800,};
+      jj_la1_0 = new int[] {0x0,0x400,0x400,0x800000,0xc000,0xc000,0xc000,0x2400,0x2400,0x0,0x0,0x1000000,0x2000000,0x60,0x60,0x180,0x180,0x0,0x10300800,0x800000,0x10300800,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x380,0x380,0x380,0x0,0x380,0x0,0x0,0x10000,0x10000,0x0,0x0,0x3f,0x3f,0x0,0x0,0x0,0x0,0x40,0x90000,0x0,0x90040,};
+      jj_la1_1 = new int[] {0x380,0x380,0x380,0x0,0x380,0x0,0x0,0x10800,0x10800,0x3,0x1000,0x0,0x0,0x0,0x0,0x0,0x0,0x40,0x90000,0x0,0x90040,};
    }
 
   /** Constructor with InputStream. */

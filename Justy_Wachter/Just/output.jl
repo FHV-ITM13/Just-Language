@@ -48,29 +48,35 @@
             <class_index>3</class_index>
             <name_and_type_index>11</name_and_type_index>
         </constant_methodref>
-        <constant_utf8 id="13">
+        <constant_boolean id="13">
+            <bytes>1</bytes>
+        </constant_boolean>
+        <constant_boolean id="14">
+            <bytes>0</bytes>
+        </constant_boolean>
+        <constant_utf8 id="15">
             <bytes>global</bytes>
         </constant_utf8>
-        <constant_utf8 id="14">
+        <constant_name_and_type id="17">
+            <!--global: I-->
+            <name_index>15</name_index>
+            <descriptor_index>16</descriptor_index>
+        </constant_name_and_type>
+        <constant_utf8 id="16">
             <bytes>I</bytes>
         </constant_utf8>
-        <constant_name_and_type id="15">
-            <!--global: I-->
-            <name_index>13</name_index>
-            <descriptor_index>14</descriptor_index>
-        </constant_name_and_type>
-        <constant_fieldref id="16">
+        <constant_fieldref id="18">
             <!--global: I-->
             <class_index>3</class_index>
-            <name_and_type_index>15</name_and_type_index>
+            <name_and_type_index>17</name_and_type_index>
         </constant_fieldref>
     </constant_pool>
     <this_class>3</this_class>
     <field_info>
         <field>
             <!--global: I-->
-            <name_index>13</name_index>
-            <descriptor_index>14</descriptor_index>
+            <name_index>15</name_index>
+            <descriptor_index>16</descriptor_index>
         </field>
     </field_info>
     <method_info>
@@ -85,12 +91,13 @@
                         <max_stack>10</max_stack>
                         <max_locals>1</max_locals>
                         <code>
-LDC_W 8
-INVOKESTATIC 12
-ISTORE 0
-ILOAD 0
-PUTSTATIC 16
-RETURN
+    LDC_W 8
+    INVOKESTATIC 12
+    ISTORE 0
+    ILOAD 0
+    PUTSTATIC 18
+    RETURN
+
 </code>
                     </info>
                 </attribute>
@@ -107,12 +114,28 @@ RETURN
                         <max_stack>10</max_stack>
                         <max_locals>1</max_locals>
                         <code>
-ILOAD 0
-GETSTATIC 16
-IADD
-LDC_W 8
-IMUL
-IRETURN
+    LDC_W 13
+    LDC_W 14
+    IF_ICMPNE L1
+    LDC_W 13
+    LDC_W 14
+    IF_ICMPEQ L2
+    ILOAD 0
+    IRETURN
+L2: NOP
+    ILOAD 0
+    PUTSTATIC 18
+    GOTO L3
+L1: NOP
+    ILOAD 0
+    GETSTATIC 18
+    IADD
+    LDC_W 8
+    IMUL
+    IRETURN
+L3: NOP
+    RETURN
+
 </code>
                     </info>
                 </attribute>

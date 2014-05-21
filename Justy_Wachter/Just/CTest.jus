@@ -6,7 +6,14 @@ program CTest {
    	}
    	
 	int doIt(int i) {
-		return (i + global) * 10;
+		if(true == false) {
+			if(true != false) {
+				return i;
+			}
+			global = i;
+		} else {
+			return (i + global) * 10;
+		}
 	}
 
 	var int global;

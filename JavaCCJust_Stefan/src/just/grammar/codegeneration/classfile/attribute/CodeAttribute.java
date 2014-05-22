@@ -1,11 +1,11 @@
-package fhv.classfile.attribute;
+package just.grammar.codegeneration.classfile.attribute;
+
+import just.grammar.codegeneration.MethodCode;
+import just.grammar.codegeneration.constant.UTF8Constant;
+import just.grammar.semantics.Scope;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import fhv.classfile.constant.UTF8Constant;
-import fhv.code.MethodCode;
-import fhv.symbol.Scope;
 
 public class CodeAttribute extends Attribute {
 
@@ -37,8 +37,7 @@ public class CodeAttribute extends Attribute {
 		stack.appendChild(doc.createTextNode("10"));
 
 		Element locals = doc.createElement("max_locals");
-		locals.appendChild(doc.createTextNode(String.valueOf(scope
-				.getNumberOfLocals() + scope.getNumberOfParams())));
+		locals.appendChild(doc.createTextNode(String.valueOf(scope.nrOfLocals + scope.nrOfParams)));
 
 		Element code = doc.createElement("code");
 		code.appendChild(doc.createTextNode(this.code.toString()));

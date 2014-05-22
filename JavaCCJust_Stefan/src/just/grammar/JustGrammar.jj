@@ -16,26 +16,29 @@ import just.grammar.semantics.SymbolTable;
 import just.grammar.semantics.Symbol;
 import just.grammar.semantics.Symbol.Kind;
 import just.grammar.semantics.*;
-
+import just.grammar.codegeneration.*;
 
 public class EG1
 {
-  static SymbolTable symbolTable;
-  static NameList nameList; 
+  static SymbolTable symbolTable = SymbolTable.SymbolTable;
+  static NameList nameList = NameList.NameList;
+  static CodeGenerator codeGen = CodeGenerator.CodeGenerator;
+  static ClassFile classFile = ClassFile.ClassFile;
   
   public static void main(String args []) throws ParseException
   {
     try
     {
-      EG1 parser = new EG1(new FileInputStream(new File("res/SmallTest.just")));
-	  symbolTable = SymbolTable.SymbolTable;
-      nameList = NameList.NameList;
-      
+      EG1 parser = new EG1(new FileInputStream(new File("res/SmallTest.jus")));
+            
       System.out.println("Reading from file");
       parser.readFile();
-      System.out.println("Code is valid!");
-
+      System.out.println("Code is valid!\n\r\n\r");
+      
+	  System.out.println("Printing symbols:!");
       symbolTable.printScopes();
+
+      System.out.println("\n\r\n\rGenerating class file");
     }
       catch (Exception e)
       {
@@ -162,13 +165,15 @@ void VarDef() :
   	Type type;
 	Token token;
 	Symbol symbol;
+	Descriptor desc;
 }
 {
 	type = Type() (< ARRAY >)? token = < IDENT >
 	{
 	  int spix = nameList.insert(token.image);
-	  symbol = new Symbol(spix, Kind.varKind, type);
+	  symbol = new Symbol(spix, Kind.fieldKind, type);
 	  symbolTable.insert(symbol);
+	  desc = codeGen.newDescriptor(symbol);
 	}
 	( Init(symbol) )? < END >
 }
@@ -238,7 +243,7 @@ void FormParList():
 	token = < IDENT >
 	{
 	  int spix = nameList.insert(token.image);
-	  symbol = new Symbol(spix, Kind.parKind, type);
+	  symbol = new Symbol(spix, Kind.paramKind, type);
 	  symbolTable.insert(symbol);
 	}
 	(
@@ -246,7 +251,7 @@ void FormParList():
 	    token = < IDENT >
 		{
 		  spix = nameList.insert(token.image);
-		  symbol = new Symbol(spix, Kind.parKind, type);
+		  symbol = new Symbol(spix, Kind.paramKind, type);
 		  symbolTable.insert(symbol);
 		}
 	)*
@@ -429,11 +434,13 @@ void Fact():
 {}
 {
   	(
-		< NUMBER >
-	  | < IDENT >
+		token = < NUMBER >
+		{			
+		}
+	  | token = < IDENT >
 	  | CallStat()
 	  | (< ROUNDBRACKETOPEN > Expr()  < ROUNDBRACKETCLOSE >)
-	  | < NEW > Type() < RECTBRACKETOPEN >  <NUMBER > < RECTBRACKETCLOSE >
+	  | < NEW > Type() < RECTBRACKETOPEN > <NUMBER > < RECTBRACKETCLOSE >
 	)
 }
 

@@ -1,8 +1,8 @@
-package fhv.classfile;
+package just.grammar.codegeneration.classfile;
+
+import just.grammar.codegeneration.constant.FieldRefConstant;
 
 import org.w3c.dom.*;
-
-import fhv.classfile.constant.FieldRefConstant;
 
 public class Field {
 	private FieldRefConstant fieldRef;

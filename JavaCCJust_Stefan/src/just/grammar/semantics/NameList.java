@@ -7,29 +7,29 @@ public class NameList {
 	public static NameList NameList = new NameList();
 	
 	// name -> spix
-	private HashMap<String, Integer> m_nameIndices;
+	private HashMap<String, Integer> nameIndices;
 	// spix -> name
-	private ArrayList<String> m_names;
+	private ArrayList<String> names;
 	
 	public NameList() {
-		m_nameIndices = new HashMap<>();
-		m_names = new ArrayList<>();
+		nameIndices = new HashMap<>();
+		names = new ArrayList<>();
 	}
 	
 	public String nameOf(Integer spix) {
-		return m_names.get(spix);
+		return names.get(spix);
 	}
 	
 	public Integer spixOf(String name) {
-		return m_nameIndices.get(name);
+		return nameIndices.get(name);
 	}
 	
 	public Integer insert(String name) {
-		m_names.add(name);
+		names.add(name);
 
-		Integer index = m_names.size() - 1;
+		Integer index = names.size() - 1;
 		
-		m_nameIndices.put(name, index);
+		nameIndices.put(name, index);
 		
 		return index;	
 	}

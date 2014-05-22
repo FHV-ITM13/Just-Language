@@ -2,7 +2,7 @@ package just.grammar.semantics;
 
 public class Symbol {
 	public enum Kind {
-		undefKind, constKind, varKind, parKind, funcKind, fieldKind
+		undefKind, constKind, localKind, fieldKind, paramKind, funcKind
 	};
 
 	public int spix; // Spelling index for name list

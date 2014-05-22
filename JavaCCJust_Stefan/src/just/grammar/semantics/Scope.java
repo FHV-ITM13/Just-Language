@@ -27,11 +27,11 @@ public class Scope {
 			symbol.next = locals;
 		}
 		
-		if(symbol.kind.equals(Kind.parKind)) {
+		if(symbol.kind.equals(Kind.paramKind)) {
 			++nrOfParams;
 		}
 		
-		if(symbol.kind.equals(Kind.varKind)) {
+		if(symbol.kind.equals(Kind.fieldKind)) {
 			++nrOfLocals;
 		}
 		

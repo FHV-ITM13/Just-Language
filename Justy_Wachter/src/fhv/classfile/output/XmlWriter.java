@@ -8,11 +8,12 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
 import javax.xml.transform.stream.StreamResult;
 
+import just.grammar.codegeneration.classfile.Field;
+import just.grammar.codegeneration.classfile.Method;
+
 import org.w3c.dom.*;
 
 import fhv.classfile.ClassFile;
-import fhv.classfile.Field;
-import fhv.classfile.Method;
 import fhv.classfile.constant.Constant;
 
 public class XmlWriter {

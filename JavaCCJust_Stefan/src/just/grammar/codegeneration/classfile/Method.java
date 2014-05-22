@@ -1,14 +1,13 @@
-package fhv.classfile;
+package just.grammar.codegeneration.classfile;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.w3c.dom.*;
+import just.grammar.codegeneration.classfile.attribute.Attribute;
+import just.grammar.codegeneration.classfile.attribute.CodeAttribute;
+import just.grammar.codegeneration.constant.MethodRefConstant;
 
-import fhv.classfile.attribute.Attribute;
-import fhv.classfile.attribute.CodeAttribute;
-import fhv.classfile.constant.FieldRefConstant;
-import fhv.classfile.constant.MethodRefConstant;
+import org.w3c.dom.*;
 
 public class Method {
 	private MethodRefConstant methodRef;

@@ -6,35 +6,13 @@ import just.grammar.semantics.Symbol.Kind;
 public class Descriptor {
 	public int address;
 	public Symbol symbol;
-	public DescKind kind;
+	public Kind kind;
+	public int spix;
 	
 	public Descriptor(Symbol symbol) {
-		this.address = -1; //TODO
+		this.address = symbol.addr;
 		this.symbol = symbol;
-		
-		defineKind(symbol.kind);
+		this.kind = symbol.kind;
+		this.spix = symbol.spix;
 	}
-
-	private void defineKind(Kind syKind) {
-		switch (syKind) {
-		case constKind:
-			this.kind = DescKind.descConst;
-			break;
-		case parKind:
-			this.kind = DescKind.descArg;
-			break;
-		case varKind:
-			this.kind = DescKind.descLocal;
-			break;
-		case fieldKind:
-			this.kind = DescKind.descField;
-			break;
-		case funcKind:
-		case undefKind:
-		default:
-			this.kind = DescKind.descStack;
-			break;
-		}
-	}
-	
 }

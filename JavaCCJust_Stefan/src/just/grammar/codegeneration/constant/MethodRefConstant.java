@@ -1,12 +1,10 @@
-package fhv.classfile.constant;
+package just.grammar.codegeneration.constant;
 
+import just.grammar.codegeneration.MethodCode;
 import just.grammar.codegeneration.classfile.Method;
 
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import fhv.code.MethodCode;
 
 public class MethodRefConstant extends Constant {
 	private ClassConstant classIndex;

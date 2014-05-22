@@ -1,27 +1,18 @@
-package fhv.classfile.constant;
+package just.grammar.codegeneration.constant;
 
-import just.grammar.codegeneration.classfile.Method;
-
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import fhv.code.MethodCode;
-
-public class MethodRefConstant extends Constant {
+public class FieldRefConstant extends Constant {
 	private ClassConstant classIndex;
 
 	private NameAndTypeConstant nameAndType;
 
-	private Method method;
-
-	private MethodCode code;
-
-	public MethodRefConstant(ClassConstant classIndex) {
+	public FieldRefConstant(ClassConstant classIndex) {
 		this.classIndex = classIndex;
 	}
 
-	public MethodRefConstant(ClassConstant classIndex,
+	public FieldRefConstant(ClassConstant classIndex,
 			NameAndTypeConstant nameAndType) {
 		this.classIndex = classIndex;
 		this.nameAndType = nameAndType;
@@ -31,34 +22,22 @@ public class MethodRefConstant extends Constant {
 		return classIndex;
 	}
 
+	public void setNameAndType(NameAndTypeConstant nameAndType) {
+		this.nameAndType = nameAndType;
+	}
+
 	public NameAndTypeConstant getNameAndType() {
 		return nameAndType;
-	}
-
-	public Method getMethod() {
-		return method;
-	}
-
-	public void setMethod(Method method) {
-		this.method = method;
-	}
-
-	public MethodCode getCode() {
-		return code;
-	}
-
-	public void setCode(MethodCode code) {
-		this.code = code;
 	}
 
 	@Override
 	public boolean isCompleted() {
 		return nameAndType != null;
 	}
-
+	
 	@Override
 	public Element writeXml(Document doc) {
-		Element element = doc.createElement("constant_methodref");
+		Element element = doc.createElement("constant_fieldref");
 		element.setAttribute("id", this.getIndex() + "");
 		element.appendChild(doc.createComment(this.nameAndType.getNameIndex().getBytes() + ": "
 				+ this.nameAndType.getDescriptorIndex().getBytes()));
@@ -70,7 +49,7 @@ public class MethodRefConstant extends Constant {
 
 		element.appendChild(clazz);
 		element.appendChild(nt);
-
+		
 		return element;
 	}
 }

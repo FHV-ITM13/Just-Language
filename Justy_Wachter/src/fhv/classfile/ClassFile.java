@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import fhv.classfile.attribute.CodeAttribute;
+import just.grammar.codegeneration.classfile.Field;
+import just.grammar.codegeneration.classfile.Method;
+import just.grammar.codegeneration.classfile.attribute.CodeAttribute;
 import fhv.classfile.constant.ClassConstant;
 import fhv.classfile.constant.Constant;
 import fhv.classfile.constant.FieldRefConstant;

@@ -257,6 +257,7 @@ void stat():
   localVarDef()
 | assignStat()
 | ifStat()
+| whileStat()
 | returnStat()
 }
 
@@ -272,8 +273,7 @@ void ifStat() :
   (
     < EQUAL >
     expr()
-    {
-      /*  */      codeGen.falseJump(Opcode.IF_ICMPNE, desc);
+    {      codeGen.falseJump(Opcode.IF_ICMPNE, desc);
     }
   | < NOT_EQUAL >
     expr()
@@ -297,6 +297,32 @@ void ifStat() :
     }
   )
 }
+
+void whileStat():{
+  IfDescriptor desc = new IfDescriptor();
+  Label beforeLabel;}{
+  {
+	beforeLabel = codeGen.createLabel();
+	codeGen.markByLabel(beforeLabel);   }
+  < WHILE >
+  < OPEN >
+  expr()
+  (
+    < EQUAL >
+    expr()
+    {
+      codeGen.falseJump(Opcode.IF_ICMPNE, desc);
+    }
+  | < NOT_EQUAL >
+    expr()
+    {
+      codeGen.falseJump(Opcode.IF_ICMPEQ, desc);
+    }
+  )
+  < CLOSE >
+  block()  {
+	codeGen.jump(beforeLabel);
+	codeGen.markByLabel(desc.getLabel());  }}
 
 void assignStat():
 {

@@ -235,6 +235,7 @@ public class Justy implements JustyConstants {
       case VAR:
       case RETURN:
       case IF:
+      case WHILE:
       case IDENTIFIER:
         ;
         break;
@@ -258,6 +259,9 @@ public class Justy implements JustyConstants {
     case IF:
       ifStat();
       break;
+    case WHILE:
+      whileStat();
+      break;
     case RETURN:
       returnStat();
       break;
@@ -278,7 +282,6 @@ public class Justy implements JustyConstants {
     case EQUAL:
       jj_consume_token(EQUAL);
       expr();
-      /*  */
       codeGen.falseJump(Opcode.IF_ICMPNE, desc);
       break;
     case NOT_EQUAL:
@@ -306,6 +309,36 @@ public class Justy implements JustyConstants {
       jj_la1[10] = jj_gen;
           codeGen.markByLabel(desc.getLabel());
     }
+  }
+
+  static final public void whileStat() throws ParseException {
+  IfDescriptor desc = new IfDescriptor();
+  Label beforeLabel;
+        beforeLabel = codeGen.createLabel();
+        codeGen.markByLabel(beforeLabel);
+    jj_consume_token(WHILE);
+    jj_consume_token(OPEN);
+    expr();
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case EQUAL:
+      jj_consume_token(EQUAL);
+      expr();
+      codeGen.falseJump(Opcode.IF_ICMPNE, desc);
+      break;
+    case NOT_EQUAL:
+      jj_consume_token(NOT_EQUAL);
+      expr();
+      codeGen.falseJump(Opcode.IF_ICMPEQ, desc);
+      break;
+    default:
+      jj_la1[11] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+    jj_consume_token(CLOSE);
+    block();
+        codeGen.jump(beforeLabel);
+        codeGen.markByLabel(desc.getLabel());
   }
 
   static final public void assignStat() throws ParseException {
@@ -337,7 +370,7 @@ public class Justy implements JustyConstants {
         ;
         break;
       default:
-        jj_la1[11] = jj_gen;
+        jj_la1[12] = jj_gen;
         break label_4;
       }
       jj_consume_token(OR);
@@ -355,7 +388,7 @@ public class Justy implements JustyConstants {
         ;
         break;
       default:
-        jj_la1[12] = jj_gen;
+        jj_la1[13] = jj_gen;
         break label_5;
       }
       jj_consume_token(AND);
@@ -375,7 +408,7 @@ public class Justy implements JustyConstants {
         ;
         break;
       default:
-        jj_la1[13] = jj_gen;
+        jj_la1[14] = jj_gen;
         break label_6;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -388,7 +421,7 @@ public class Justy implements JustyConstants {
         code = Opcode.ISUB;
         break;
       default:
-        jj_la1[14] = jj_gen;
+        jj_la1[15] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -408,7 +441,7 @@ public class Justy implements JustyConstants {
         ;
         break;
       default:
-        jj_la1[15] = jj_gen;
+        jj_la1[16] = jj_gen;
         break label_7;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -421,7 +454,7 @@ public class Justy implements JustyConstants {
         code = Opcode.IDIV;
         break;
       default:
-        jj_la1[16] = jj_gen;
+        jj_la1[17] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -438,7 +471,7 @@ public class Justy implements JustyConstants {
     not = true;
       break;
     default:
-      jj_la1[17] = jj_gen;
+      jj_la1[18] = jj_gen;
       ;
     }
     factor();
@@ -478,7 +511,7 @@ public class Justy implements JustyConstants {
       jj_consume_token(CLOSE);
       break;
     default:
-      jj_la1[18] = jj_gen;
+      jj_la1[19] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -539,7 +572,7 @@ public class Justy implements JustyConstants {
           ;
           break;
         default:
-          jj_la1[19] = jj_gen;
+          jj_la1[20] = jj_gen;
           break label_8;
         }
         jj_consume_token(SEPERATOR);
@@ -547,7 +580,7 @@ public class Justy implements JustyConstants {
       }
       break;
     default:
-      jj_la1[20] = jj_gen;
+      jj_la1[21] = jj_gen;
       ;
     }
   }
@@ -562,7 +595,7 @@ public class Justy implements JustyConstants {
   static public Token jj_nt;
   static private int jj_ntk;
   static private int jj_gen;
-  static final private int[] jj_la1 = new int[21];
+  static final private int[] jj_la1 = new int[22];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -570,10 +603,10 @@ public class Justy implements JustyConstants {
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x0,0x400,0x400,0x800000,0xc000,0xc000,0xc000,0x2400,0x2400,0x0,0x0,0x1000000,0x2000000,0x60,0x60,0x180,0x180,0x0,0x10300800,0x800000,0x10300800,};
+      jj_la1_0 = new int[] {0x0,0x400,0x400,0x800000,0xc000,0xc000,0xc000,0x2400,0x2400,0x0,0x0,0x0,0x1000000,0x2000000,0x60,0x60,0x180,0x180,0x0,0x10300800,0x800000,0x10300800,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x380,0x380,0x380,0x0,0x380,0x0,0x0,0x10800,0x10800,0x3,0x1000,0x0,0x0,0x0,0x0,0x0,0x0,0x40,0x90000,0x0,0x90040,};
+      jj_la1_1 = new int[] {0x380,0x380,0x380,0x0,0x380,0x0,0x0,0x14800,0x14800,0x3,0x1000,0x3,0x0,0x0,0x0,0x0,0x0,0x0,0x40,0x90000,0x0,0x90040,};
    }
 
   /** Constructor with InputStream. */
@@ -594,7 +627,7 @@ public class Justy implements JustyConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 21; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 22; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -608,7 +641,7 @@ public class Justy implements JustyConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 21; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 22; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -625,7 +658,7 @@ public class Justy implements JustyConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 21; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 22; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -635,7 +668,7 @@ public class Justy implements JustyConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 21; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 22; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -651,7 +684,7 @@ public class Justy implements JustyConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 21; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 22; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -660,7 +693,7 @@ public class Justy implements JustyConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 21; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 22; i++) jj_la1[i] = -1;
   }
 
   static private Token jj_consume_token(int kind) throws ParseException {
@@ -716,7 +749,7 @@ public class Justy implements JustyConstants {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 21; i++) {
+    for (int i = 0; i < 22; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {

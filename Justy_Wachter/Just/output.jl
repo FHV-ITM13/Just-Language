@@ -30,53 +30,50 @@
             <name_and_type_index>6</name_and_type_index>
         </constant_methodref>
         <constant_integer id="8">
-            <bytes>10</bytes>
+            <bytes>1</bytes>
         </constant_integer>
         <constant_utf8 id="9">
-            <bytes>doIt</bytes>
+            <bytes>fibonacci</bytes>
         </constant_utf8>
         <constant_utf8 id="10">
             <bytes>(I)I</bytes>
         </constant_utf8>
         <constant_name_and_type id="11">
-            <!--doIt: (I)I-->
+            <!--fibonacci: (I)I-->
             <name_index>9</name_index>
             <descriptor_index>10</descriptor_index>
         </constant_name_and_type>
         <constant_methodref id="12">
-            <!--doIt: (I)I-->
+            <!--fibonacci: (I)I-->
             <class_index>3</class_index>
             <name_and_type_index>11</name_and_type_index>
         </constant_methodref>
-        <constant_boolean id="13">
-            <bytes>1</bytes>
-        </constant_boolean>
-        <constant_boolean id="14">
+        <constant_integer id="13">
             <bytes>0</bytes>
-        </constant_boolean>
-        <constant_utf8 id="15">
+        </constant_integer>
+        <constant_utf8 id="14">
             <bytes>global</bytes>
         </constant_utf8>
-        <constant_name_and_type id="17">
-            <!--global: I-->
-            <name_index>15</name_index>
-            <descriptor_index>16</descriptor_index>
-        </constant_name_and_type>
-        <constant_utf8 id="16">
+        <constant_utf8 id="15">
             <bytes>I</bytes>
         </constant_utf8>
-        <constant_fieldref id="18">
+        <constant_fieldref id="17">
             <!--global: I-->
             <class_index>3</class_index>
-            <name_and_type_index>17</name_and_type_index>
+            <name_and_type_index>16</name_and_type_index>
         </constant_fieldref>
+        <constant_name_and_type id="16">
+            <!--global: I-->
+            <name_index>14</name_index>
+            <descriptor_index>15</descriptor_index>
+        </constant_name_and_type>
     </constant_pool>
     <this_class>3</this_class>
     <field_info>
         <field>
             <!--global: I-->
-            <name_index>15</name_index>
-            <descriptor_index>16</descriptor_index>
+            <name_index>14</name_index>
+            <descriptor_index>15</descriptor_index>
         </field>
     </field_info>
     <method_info>
@@ -94,8 +91,6 @@
     LDC_W 8
     INVOKESTATIC 12
     ISTORE 0
-    ILOAD 0
-    PUTSTATIC 18
     RETURN
 
 </code>
@@ -104,7 +99,7 @@
             </attribute_info>
         </method>
         <method>
-            <!--doIt: (I)I-->
+            <!--fibonacci: (I)I-->
             <name_index>9</name_index>
             <descriptor_index>10</descriptor_index>
             <attribute_info>
@@ -112,34 +107,36 @@
                     <attribute_name_index>1</attribute_name_index>
                     <info>
                         <max_stack>10</max_stack>
-                        <max_locals>1</max_locals>
+                        <max_locals>6</max_locals>
                         <code>
     LDC_W 13
-    LDC_W 14
-    IF_ICMPNE L1
-    LDC_W 13
-    LDC_W 14
-    IF_ICMPEQ L2
-    ILOAD 0
-    IRETURN
-    GOTO L3
-L2: NOP
-    GETSTATIC 18
-    IRETURN
-L3: NOP
-    ILOAD 0
-    PUTSTATIC 18
-    GOTO L4
-L1: NOP
-    ILOAD 0
-    GETSTATIC 18
-    IADD
+    ISTORE 1
     LDC_W 8
-    IMUL
+    ISTORE 2
+    LDC_W 13
+    ISTORE 3
+    LDC_W 8
+    ISTORE 4
+    NOP
+    ILOAD 2
+    ILOAD 0
+    IF_ICMPEQ L2
+    ILOAD 3
+    ILOAD 4
+    IADD
+    ISTORE 5
+    ILOAD 4
+    ISTORE 3
+    ILOAD 5
+    ISTORE 4
+    ILOAD 2
+    LDC_W 8
+    IADD
+    ISTORE 2
+    GOTO L1
+L2: NOP
+    ILOAD 4
     IRETURN
-L4: NOP
-    RETURN
-
 </code>
                     </info>
                 </attribute>

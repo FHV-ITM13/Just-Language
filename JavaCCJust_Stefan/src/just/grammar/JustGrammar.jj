@@ -30,7 +30,7 @@ public class EG1
   {
     try
     {
-      EG1 parser = new EG1(new FileInputStream(new File("res/SmallTest.jus")));
+      EG1 parser = new EG1(new FileInputStream(new File("res/TestClass.jus")));
             
       System.out.println("Reading from file");
       parser.readFile();

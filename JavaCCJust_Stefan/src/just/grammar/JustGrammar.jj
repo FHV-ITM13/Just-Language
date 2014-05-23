@@ -17,6 +17,7 @@ import just.grammar.semantics.Symbol;
 import just.grammar.semantics.Symbol.Kind;
 import just.grammar.semantics.*;
 import just.grammar.codegeneration.*;
+import just.grammar.codegeneration.classfile.*;
 
 public class EG1
 {
@@ -431,16 +432,19 @@ void NotFact():
 }
 
 void Fact():
-{}
+{
+  int val;
+}
 {
   	(
 		token = < NUMBER >
-		{			
+		{			val = Integer.parseInt(token.image);
 		}
 	  | token = < IDENT >
 	  | CallStat()
 	  | (< ROUNDBRACKETOPEN > Expr()  < ROUNDBRACKETCLOSE >)
-	  | < NEW > Type() < RECTBRACKETOPEN > <NUMBER > < RECTBRACKETCLOSE >
+	  | < NEW > Type() < RECTBRACKETOPEN > <NUMBER >	  {
+	  		val = Integer.parseInt(token.image);	  } < RECTBRACKETCLOSE >
 	)
 }
 

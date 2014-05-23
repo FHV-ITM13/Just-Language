@@ -1,0 +1,22 @@
+program testcode
+{	
+	function void main() {
+		int var = foo(1);
+		global = var + 1;
+	}	
+	
+	function int foo(int param)
+	{
+		int var;
+		
+		if(param == 1) {
+			var = 2;
+		} else {
+			var = 3;
+		}
+		
+		return var;
+	}
+	
+	int global;
+}

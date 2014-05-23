@@ -1,4 +1,4 @@
-program testcode
+program TestClass
 {	
 	function void main() {
 		int var = foo(1);

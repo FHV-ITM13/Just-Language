@@ -122,10 +122,14 @@
     IF_ICMPEQ L2
     ILOAD 0
     IRETURN
+    GOTO L3
 L2: NOP
+    GETSTATIC 18
+    IRETURN
+L3: NOP
     ILOAD 0
     PUTSTATIC 18
-    GOTO L3
+    GOTO L4
 L1: NOP
     ILOAD 0
     GETSTATIC 18
@@ -133,7 +137,7 @@ L1: NOP
     LDC_W 8
     IMUL
     IRETURN
-L3: NOP
+L4: NOP
     RETURN
 
 </code>

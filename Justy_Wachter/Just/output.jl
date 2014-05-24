@@ -117,7 +117,7 @@
     ISTORE 3
     LDC_W 8
     ISTORE 4
-    NOP
+L1: NOP
     ILOAD 2
     ILOAD 0
     IF_ICMPEQ L2

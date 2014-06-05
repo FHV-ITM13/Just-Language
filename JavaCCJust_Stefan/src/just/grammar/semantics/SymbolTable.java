@@ -8,13 +8,10 @@ public class SymbolTable {
 	public static SymbolTable SymbolTable = new SymbolTable();
 	private LinkedList<Scope> scopes = new LinkedList<Scope>();
 	
-	private int curLevel;
-	private Scope currScope;
+	private int curLevel = -1;
+	private Scope currScope = null;
 
 	public SymbolTable() {
-		curLevel = 0;
-		currScope = new Scope("program");
-		scopes.add(currScope);
 	}
 
 	public void enterScope(String name) {

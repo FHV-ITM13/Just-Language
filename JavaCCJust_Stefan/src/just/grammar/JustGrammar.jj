@@ -16,26 +16,41 @@ import just.grammar.semantics.SymbolTable;
 import just.grammar.semantics.Symbol;
 import just.grammar.semantics.Symbol.Kind;
 import just.grammar.semantics.*;
-
+import just.grammar.codegeneration.classfile.Classfile;
+import just.grammar.codegeneration.classfile.constants.*;
+import just.grammar.codegeneration.classfile.fields.*;
+import just.grammar.codegeneration.classfile.methods.*;
 
 public class EG1
 {
   static SymbolTable symbolTable;
-  static NameList nameList; 
+  static NameList nameList;
+  static Classfile classfile;
   
   public static void main(String args []) throws ParseException
   {
     try
     {
-      EG1 parser = new EG1(new FileInputStream(new File("res/SmallTest.just")));
+      EG1 parser = new EG1(new FileInputStream(new File("res/ATest.jus")));
+      
 	  symbolTable = SymbolTable.SymbolTable;
       nameList = NameList.NameList;
+      classfile = new Classfile();
       
       System.out.println("Reading from file");
       parser.readFile();
       System.out.println("Code is valid!");
-
+      
+      System.out.println("####################################");
+ 
+      System.out.println("Printing Scopes with variables:");
       symbolTable.printScopes();
+
+      System.out.println("####################################");
+      System.out.println("Writing class file...");
+      classfile.write("res/ATest.ojus");
+      System.out.println("Class file was successfully created!");
+      
     }
       catch (Exception e)
       {
@@ -130,7 +145,7 @@ TOKEN: /* brackets */
 
 TOKEN : /* IDENT */
 {
-  < IDENT : < LOWERLETTER > (< LOWERLETTER > | < UPPERLETTER > | < NUMBER >)* >
+  < IDENT : (< LOWERLETTER > | < UPPERLETTER >) (< LOWERLETTER > | < UPPERLETTER > | < NUMBER >)* >
 | < #LOWERLETTER : [ "a"-"z" ] >
 | < #UPPERLETTER : [ "A"-"Z" ] >
 }
@@ -142,10 +157,27 @@ void readFile() :
 }
 
 void CompilationUnit() :
-{}
+{
+  Symbol symbol;
+  Constant classConstant;
+  Token identToken;
+}
 {
   	(< IMPORT ><IDENT ><END >)*
-  	< PROGRAM > <IDENT> <CURLYBRACKETOPEN> Definition() <CURLYBRACKETCLOSE>
+  	< PROGRAM >
+  	identToken = <IDENT>  	{
+	  symbolTable.enterScope(identToken.image);
+  	  
+  	  int spix = nameList.insert(identToken.image);
+	  symbol = new Symbol(spix, Kind.programKind);
+	  symbolTable.insert(symbol);
+	  classConstant = classfile.addClassConstant(symbol);
+  	}
+  	<CURLYBRACKETOPEN>
+  		Definition()
+  	<CURLYBRACKETCLOSE>
+  	{		symbolTable.leaveScope();
+  	}
 }
 
 void Definition() :
@@ -169,6 +201,7 @@ void VarDef() :
 	  int spix = nameList.insert(token.image);
 	  symbol = new Symbol(spix, Kind.varKind, type);
 	  symbolTable.insert(symbol);
+	  classfile.addVarConstant(symbol);	  
 	}
 	( Init(symbol) )? < END >
 }

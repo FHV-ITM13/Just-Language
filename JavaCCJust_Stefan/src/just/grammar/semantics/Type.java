@@ -1,7 +1,7 @@
 package just.grammar.semantics;
 
 public enum Type {
-	undefType("undefined"), voidType("void"), boolType("boolean"), intType("integer"), fieldType("array");
+	undefType("UDEF"), voidType("V"), boolType("B"), intType("I"), fieldType("A");
 	
 	private final String name;       
 
@@ -9,6 +9,10 @@ public enum Type {
         name = s;
     }
 
+    public String getName() {
+    	return name;
+    }
+    
     public String toString(){
        return name;
     }

@@ -11,15 +11,11 @@ PARSER_BEGIN(EG1)
 package just.grammar;
 import java.io.FileInputStream;
 import java.io.File;
-import just.grammar.semantics.Type;
-import just.grammar.semantics.SymbolTable;
-import just.grammar.semantics.Symbol;
+import just.grammar.semantics.*;
 import just.grammar.semantics.Symbol.Kind;
 import just.grammar.semantics.*;
-import just.grammar.codegeneration.classfile.Classfile;
 import just.grammar.codegeneration.classfile.constants.*;
-import just.grammar.codegeneration.classfile.fields.*;
-import just.grammar.codegeneration.classfile.methods.*;
+import just.grammar.codegeneration.classfile.*;
 
 public class EG1
 {
@@ -31,7 +27,7 @@ public class EG1
   {
     try
     {
-      EG1 parser = new EG1(new FileInputStream(new File("res/ATest.jus")));
+      EG1 parser = new EG1(new FileInputStream(new File("res/BTest.jus")));
       
 	  symbolTable = SymbolTable.SymbolTable;
       nameList = NameList.NameList;
@@ -48,7 +44,7 @@ public class EG1
 
       System.out.println("####################################");
       System.out.println("Writing class file...");
-      classfile.write("res/ATest.ojus");
+      classfile.write(String.format("res/%s.ojus", classfile.getClassConstant().getName().getBytes()));
       System.out.println("Class file was successfully created!");
       
     }
@@ -184,12 +180,12 @@ void Definition() :
 {}
 {
   (
-      VarDef()
+      VarDef(Kind.fieldKind)
     | FuncDef()
   )*
 }
 
-void VarDef() :
+void VarDef(Kind kind) :
 {
   	Type type;
 	Token token;
@@ -199,9 +195,9 @@ void VarDef() :
 	type = Type() (< ARRAY >)? token = < IDENT >
 	{
 	  int spix = nameList.insert(token.image);
-	  symbol = new Symbol(spix, Kind.varKind, type);
+	  symbol = new Symbol(spix, kind, type);
 	  symbolTable.insert(symbol);
-	  classfile.addVarConstant(symbol);	  
+	  classfile.addVarConstant(symbol);
 	}
 	( Init(symbol) )? < END >
 }
@@ -245,22 +241,24 @@ void FuncHead():
 {
   	Type type;
 	Token identToken;
-	Symbol symbol;
+	MethodSymbol symbol;
 }
 {
 	< FUNCTION > (< COROUTINE >)? type = Type()
 	identToken = < IDENT >
 	{
 	  int spix = nameList.insert(identToken.image);
-	  symbol = new Symbol(spix, Kind.funcKind, type);
+	  symbol = new MethodSymbol(spix, Kind.funcKind, type);
 	  symbolTable.insert(symbol);
 	  
 	  symbolTable.enterScope(identToken.image);
 	}
-	< ROUNDBRACKETOPEN > ( FormParList() )? < ROUNDBRACKETCLOSE >
+	< ROUNDBRACKETOPEN > ( FormParList(symbol) )? < ROUNDBRACKETCLOSE >
+	{
+	  classfile.addMethodConstant(symbol);	}
 }
 
-void FormParList():
+void FormParList(MethodSymbol method):
 {
   	Type type;
 	Token token;
@@ -273,6 +271,7 @@ void FormParList():
 	  int spix = nameList.insert(token.image);
 	  symbol = new Symbol(spix, Kind.parKind, type);
 	  symbolTable.insert(symbol);
+	  method.addParam(symbol);
 	}
 	(
 	    < SEPERATOR > ( < BYREF > )? type = Type()
@@ -281,6 +280,7 @@ void FormParList():
 		  spix = nameList.insert(token.image);
 		  symbol = new Symbol(spix, Kind.parKind, type);
 		  symbolTable.insert(symbol);
+		  method.addParam(symbol);
 		}
 	)*
 }
@@ -290,7 +290,7 @@ void Block() :
 {
 	< CURLYBRACKETOPEN >
 	(
-	  	VarDef() | Stat()
+	  	VarDef(Kind.varKind) | Stat()
 	)*
 	<CURLYBRACKETCLOSE >
 	{
@@ -463,6 +463,8 @@ void Fact():
 {
   	(
 		< NUMBER >
+	  | < FALSE >
+	  | < TRUE >
 	  | < IDENT >
 	  | CallStat()
 	  | (< ROUNDBRACKETOPEN > Expr()  < ROUNDBRACKETCLOSE >)

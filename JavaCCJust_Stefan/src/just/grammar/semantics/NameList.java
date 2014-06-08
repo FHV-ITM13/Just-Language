@@ -11,7 +11,7 @@ public class NameList {
 	// spix -> name
 	private ArrayList<String> m_names;
 	
-	public NameList() {
+	private NameList() {
 		m_nameIndices = new HashMap<>();
 		m_names = new ArrayList<>();
 	}

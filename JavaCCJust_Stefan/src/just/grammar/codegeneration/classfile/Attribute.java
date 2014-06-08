@@ -1,16 +1,26 @@
 package just.grammar.codegeneration.classfile;
 
 import just.grammar.codegeneration.classfile.constants.UTF8Constant;
+import just.grammar.codegeneration.code.MethodCode;
+import just.grammar.semantics.Scope;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class CodeAttribute {
+public class Attribute {
 
 	private UTF8Constant nameIndex;
+	private Scope scope;
+	private MethodCode methodCode;
 	
-	public CodeAttribute(UTF8Constant nameIndex) {
+	public Attribute(UTF8Constant nameIndex, Scope scope) {
 		this.nameIndex = nameIndex;
+		this.scope = scope;
+		methodCode = new MethodCode();
+	}
+	
+	public Scope getScope() {
+		return scope;
 	}
 	
 	public UTF8Constant getNameIndex() {
@@ -21,6 +31,14 @@ public class CodeAttribute {
 		this.nameIndex = nameIndex;
 	}
 	
+	public MethodCode getMethodCode() {
+		return methodCode;
+	}
+
+	public void setMethodCode(MethodCode methodCode) {
+		this.methodCode = methodCode;
+	}
+
 	public Element writeXml(Document doc) {
 		Element element = doc.createElement("attribute");
 		
@@ -30,8 +48,13 @@ public class CodeAttribute {
 		element.appendChild(attNameIndex);
 		
 		Element maxStack = doc.createElement("max_stack");
+		maxStack.appendChild(doc.createTextNode("1"));
+
 		Element maxLocals = doc.createElement("max_locals");
+		maxLocals.appendChild(doc.createTextNode("" + (scope.nrOfLocals + scope.nrOfParams)));
+		
 		Element code = doc.createElement("code");
+		code.appendChild(doc.createTextNode(methodCode.toString()));
 
 		Element info = doc.createElement("info");
 		info.appendChild(maxStack);

@@ -13,6 +13,7 @@ import just.grammar.codegeneration.classfile.constants.UTF8Constant;
 import just.grammar.codegeneration.output.XMLWriter;
 import just.grammar.semantics.MethodSymbol;
 import just.grammar.semantics.NameList;
+import just.grammar.semantics.Scope;
 import just.grammar.semantics.Symbol;
 import just.grammar.semantics.Symbol.Kind;
 
@@ -80,14 +81,14 @@ public class Classfile {
 		return constant;
 	}
 	
-	public Constant addVarConstant(Symbol s) {
+	public Constant addVarConstant(Symbol symbol) {
 		//only global variables are important for constant pool
 		//ignore Kind.varKind (local variables)
-		if (s.kind == Kind.fieldKind) {
+		if (symbol.kind == Kind.fieldKind) {
 			//add var name to constant pool
-			Constant name = this.addNameConstant(s.spix);
+			Constant name = this.addNameConstant(symbol.spix);
 			//add type to constant pool
-			Constant type = this.addTypeConstant(s);
+			Constant type = this.addTypeConstant(symbol);
 			//add variable with name and type
 			Constant constant = this.addConstant(new NameTypeConstant(name, type));
 
@@ -95,7 +96,7 @@ public class Classfile {
 
 			this.fields.add(new Field((FieldRefConstant) constant));
 
-			s.addr = constant.getIndex();
+			symbol.addr = constant.getIndex();
 
 			return constant;
 		}
@@ -103,28 +104,26 @@ public class Classfile {
 		return null;
 	}
 
-	public Constant addClassConstant(Symbol s) {
-		return addConstant(new ClassConstant(addNameConstant(s.spix)));
+	public Constant addClassConstant(Symbol symbol) {
+		return addConstant(new ClassConstant(addNameConstant(symbol.spix)));
 	}
 	
-	public Constant addMethodConstant(MethodSymbol s) {
-		if(s.kind == Kind.funcKind) {
-			String methodSignature = String.format("(%s)%s", s.getParamsAsString(), s.type.getName());
+	public Constant addMethodConstant(MethodSymbol method, Scope scope) {
+		if(method.kind == Kind.funcKind) {
+			String methodSignature = String.format("(%s)%s", method.getParamsAsString(), method.type.getName());
 			
 			//add method name and method signature to constant pool
-			Constant constant = this.addNameTypeConstant(s.spix, methodSignature);
+			Constant constant = this.addNameTypeConstant(method.spix, methodSignature);
 			//add method ref to constant pool
 			constant = this.addConstant(new MethodRefConstant(classConstant, (NameTypeConstant) constant));
 
 			//add to method to method pool
-			this.methods.add(new Method((MethodRefConstant) constant, new CodeAttribute(codeConstant)));
-
-//			CodeAttribute codeAttr = new CodeAttribute(this.codeConstant, scope);
-//			m.addAttribute(codeAttr);
-//			constant.setMethod(m);
-//			constant.setCode(codeAttr.getCode());
+			this.methods.add(new Method((MethodRefConstant) constant, new Attribute(codeConstant, scope)));
 			
-			s.addr = constant.getIndex();
+			//add ref to method code
+			((MethodRefConstant)constant).setMethodCode(methods.get(methods.size() -1 ).getAttribute().getMethodCode());
+			
+			method.addr = constant.getIndex();
 
 			return constant;
 		}
@@ -150,8 +149,8 @@ public class Classfile {
 		return addConstant(new UTF8Constant(NameList.NameList.nameOf(spix)));
 	}
 	
-	private Constant addTypeConstant(Symbol s) {
-		return addConstant(new UTF8Constant(s.type.getName()));
+	private Constant addTypeConstant(Symbol symbol) {
+		return addConstant(new UTF8Constant(symbol.type.getName()));
 	}
 	
 	private Constant getUTF8Constant(String bytes) {

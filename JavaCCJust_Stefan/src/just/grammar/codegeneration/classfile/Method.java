@@ -7,19 +7,19 @@ import just.grammar.codegeneration.classfile.constants.MethodRefConstant;
 
 public class Method {
 	private MethodRefConstant methodRef;
-	private CodeAttribute codeAttribute;
+	private Attribute codeAttribute;
 	
-	public Method(MethodRefConstant constant, CodeAttribute codeAttribute) {
+	public Method(MethodRefConstant constant, Attribute codeAttribute) {
 		setMethodRef(constant);
 		
 		this.codeAttribute = codeAttribute;
 	}
 	
-	public CodeAttribute getCodeAttribute() {
+	public Attribute getAttribute() {
 		return codeAttribute;
 	}
 
-	public void setCodeAttribute(CodeAttribute codeAttr) {
+	public void setAttribute(Attribute codeAttr) {
 		codeAttribute = codeAttr;
 	}
 	

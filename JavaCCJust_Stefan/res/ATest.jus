@@ -7,7 +7,8 @@ program ATest {
 	
 	function void main() {
 		int a;
-   		call doIt(10);
+   		a = call doIt(10);
+   		
    		global = a;
    	}
 }

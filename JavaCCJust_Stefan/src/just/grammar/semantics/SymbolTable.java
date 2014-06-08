@@ -11,9 +11,13 @@ public class SymbolTable {
 	private int curLevel = -1;
 	private Scope currScope = null;
 
-	public SymbolTable() {
+	private SymbolTable() {
 	}
 
+	public Scope getCurrentScope() {
+		return currScope;
+	}
+	
 	public void enterScope(String name) {
 		++this.curLevel;
 

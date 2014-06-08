@@ -7,12 +7,22 @@ import just.grammar.codegeneration.classfile.constants.MethodRefConstant;
 
 public class Method {
 	private MethodRefConstant methodRef;
+	private CodeAttribute codeAttribute;
 	
-	
-	public Method(MethodRefConstant constant) {
+	public Method(MethodRefConstant constant, CodeAttribute codeAttribute) {
 		setMethodRef(constant);
+		
+		this.codeAttribute = codeAttribute;
+	}
+	
+	public CodeAttribute getCodeAttribute() {
+		return codeAttribute;
 	}
 
+	public void setCodeAttribute(CodeAttribute codeAttr) {
+		codeAttribute = codeAttr;
+	}
+	
 	public MethodRefConstant getMethodRef() {
 		return methodRef;
 	}
@@ -25,6 +35,19 @@ public class Method {
 		Element element = doc.createElement("method");
 		element.appendChild(doc.createComment(methodRef.getNameAndType().getName().getBytes()));
 		
+		Element nameIndex = doc.createElement("name_index");
+		nameIndex.appendChild(doc.createTextNode("" + methodRef.getNameAndType().getName().getIndex()));
+		element.appendChild(nameIndex);
+		
+		Element descriptorIndex = doc.createElement("descriptor_index");
+		descriptorIndex.appendChild(doc.createTextNode("" + methodRef.getNameAndType().getDescriptor().getIndex()));
+		element.appendChild(descriptorIndex);
+		
+		Element attributeInfo = doc.createElement("attribute_info");		
+		
+		attributeInfo.appendChild(codeAttribute.writeXml(doc));		
+		
+		element.appendChild(attributeInfo);
 		return element;
 	}
 }

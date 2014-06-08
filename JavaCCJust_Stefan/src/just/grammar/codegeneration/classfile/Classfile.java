@@ -20,7 +20,9 @@ public class Classfile {
 	private List<Method> methods;
 	private List<Field> fields;
 	private HashMap<Integer, Constant> constants;
+	
 	private ClassConstant classConstant;
+	private UTF8Constant codeConstant;
 	
 	private String magic = "justclassfile";
 	private String majorVers = "1";
@@ -30,6 +32,7 @@ public class Classfile {
 		methods = new ArrayList<Method>();
 		fields = new ArrayList<Field>();
 		constants = new HashMap<Integer, Constant>();
+		codeConstant = (UTF8Constant)addConstant(new UTF8Constant("Code"));
 	}
 
 	public List<Method> getMethods() {
@@ -71,12 +74,6 @@ public class Classfile {
 				return tempConst;
 			}
 		}
-//		} else if (constant instanceof ValueConstant) {
-//			ValueConstant tempVal = this.getValueConstant(((ValueConstant) constant).getBytes());
-//			if (tempVal != null) {
-//				return tempVal;
-//			}
-//		}
 
 		this.constants.put(constant.getIndex(), constant);
 
@@ -120,8 +117,13 @@ public class Classfile {
 			constant = this.addConstant(new MethodRefConstant(classConstant, (NameTypeConstant) constant));
 
 			//add to method to method pool
-			this.methods.add(new Method((MethodRefConstant) constant));
+			this.methods.add(new Method((MethodRefConstant) constant, new CodeAttribute(codeConstant)));
 
+//			CodeAttribute codeAttr = new CodeAttribute(this.codeConstant, scope);
+//			m.addAttribute(codeAttr);
+//			constant.setMethod(m);
+//			constant.setCode(codeAttr.getCode());
+			
 			s.addr = constant.getIndex();
 
 			return constant;
@@ -130,29 +132,7 @@ public class Classfile {
 		return null;
 	}
 	
-//	String typeString = String.format("(%s)%s", s.getParamTypes(), s
-//			.getType().getShortName());
-//
-//	Constant name = this.addNameConstant(s);
-//	Constant type = this.addConstant(new UTF8Constant(typeString));
-//
-//	Constant nameAndTypeConstant = this
-//			.addConstant(new NameAndTypeConstant(name, type));
-//
-//	MethodRefConstant constant = (MethodRefConstant) this
-//			.addConstant(new MethodRefConstant(this.classConstant,
-//					(NameAndTypeConstant) nameAndTypeConstant));
-//
-//	Method m = new Method(constant);
-//	this.methods.add(m);
-//	CodeAttribute codeAttr = new CodeAttribute(this.codeConstant, scope);
-//	m.addAttribute(codeAttr);
-//
-//	constant.setMethod(m);
-//	constant.setCode(codeAttr.getCode());
-//	s.setAddress(constant.getIndex());
-//
-//	return constant;
+
 
 	
 	private Constant addNameTypeConstant(int nameSpix, String type) {

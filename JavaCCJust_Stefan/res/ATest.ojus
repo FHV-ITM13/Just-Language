@@ -81,7 +81,9 @@
                     <info>
                         <max_stack>1</max_stack>
                         <max_locals>1</max_locals>
-                        <code/>
+                        <code>
+ILOAD -1
+</code>
                     </info>
                 </attribute>
             </attribute_info>
@@ -96,7 +98,13 @@
                     <info>
                         <max_stack>1</max_stack>
                         <max_locals>1</max_locals>
-                        <code/>
+                        <code>
+LDC_W 10
+INVOKESTATIC just.grammar.codegeneration.Descriptor@18963b33
+ISTORE -1
+ILOAD -1
+PUTSTATIC 7
+</code>
                     </info>
                 </attribute>
             </attribute_info>

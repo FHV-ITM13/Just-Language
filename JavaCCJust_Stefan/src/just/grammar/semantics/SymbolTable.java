@@ -35,7 +35,7 @@ public class SymbolTable {
 			currScope.insert(symbol);
 		}
 	}
-
+	
 	public Symbol lookup(String name) {
 		Integer spix = NameList.NameList.spixOf(name);
 		
@@ -50,11 +50,11 @@ public class SymbolTable {
 			System.err.println("WARNING: SymbolTable lookup: " + name + " not in current scope but in NameList!");
 		}
 				
-		Integer newSpix = NameList.NameList.insert(name);
-		Symbol newSymbol = new Symbol(newSpix, Kind.undefKind);
-		insert(newSymbol);
-		
-		return newSymbol;
+		return null;
+//		Symbol newSymbol = new Symbol(spix, Kind.undefKind);
+//		insert(newSymbol);
+//		
+//		return newSymbol;
 	}
 	
 	private Symbol findSymbolInScopeTree(Integer spix) {

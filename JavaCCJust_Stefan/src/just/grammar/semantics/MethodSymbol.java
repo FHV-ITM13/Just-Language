@@ -7,8 +7,12 @@ public class MethodSymbol extends Symbol {
 
 	private List<Symbol> params;
 	
-	public MethodSymbol(int spix, Kind kind, Type type) {
-		super(spix, kind, type);
+	public MethodSymbol(int spix) {
+		this(spix, Type.undefType);		
+	}
+	
+	public MethodSymbol(int spix, Type type) {
+		super(spix, Kind.funcKind, type);
 		params = new ArrayList<Symbol>();
 	}
 	

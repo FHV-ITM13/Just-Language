@@ -25,12 +25,14 @@ public class NameList {
 	}
 	
 	public Integer insert(String name) {
-		m_names.add(name);
-
-		Integer index = m_names.size() - 1;
-		
-		m_nameIndices.put(name, index);
-		
-		return index;	
+		if(m_nameIndices.containsKey(name)) {
+			return m_nameIndices.get(name);
+		} else {
+			m_names.add(name);
+			Integer index = m_names.size() - 1;
+			m_nameIndices.put(name, index);
+			
+			return index;
+		}
 	}
 }

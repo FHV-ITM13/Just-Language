@@ -131,9 +131,6 @@ public class Classfile {
 		return null;
 	}
 	
-
-
-	
 	private Constant addNameTypeConstant(int nameSpix, String type) {
 		Constant nameConst = this.addNameConstant(nameSpix);
 		Constant typeConst = this.addConstant(new UTF8Constant(type));

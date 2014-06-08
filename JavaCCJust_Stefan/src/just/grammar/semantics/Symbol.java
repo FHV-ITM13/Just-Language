@@ -25,6 +25,8 @@ public class Symbol {
 	public Symbol(int spix, Kind kind) {
 		this.spix = spix;
 		this.kind = kind;
+		this.addr = -1;
+		this.type = Type.undefType;
 	}
 	
 	public Symbol(int spix, Kind kind, Type type) {

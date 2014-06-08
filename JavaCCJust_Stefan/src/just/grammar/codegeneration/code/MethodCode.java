@@ -21,10 +21,16 @@ public class MethodCode {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
+		sb.append('\n');
 		
 		for (CodeLine codeLine : codeLines) {
 			sb.append(codeLine.getOpCode());
-			sb.append(System.getProperty("line.separator"));
+			
+			if(codeLine.getOp() != null) {
+				sb.append(" " + codeLine.getOp());
+			}
+			
+			sb.append("\n");
 		}
 		
 		return sb.toString();

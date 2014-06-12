@@ -3,6 +3,8 @@ package just.grammar.codegeneration.code;
 import java.util.ArrayList;
 import java.util.List;
 
+import just.grammar.codegeneration.OpCode;
+
 public class MethodCode {
 	private List<CodeLine> codeLines;
 	
@@ -24,12 +26,12 @@ public class MethodCode {
 		sb.append('\n');
 		
 		for (CodeLine codeLine : codeLines) {
-			sb.append(codeLine.getOpCode());
-			
-			if(codeLine.getOp() != null) {
-				sb.append(" " + codeLine.getOp());
-			}
-			
+			sb.append(codeLine);
+			sb.append("\n");
+		}
+		
+		if(!codeLines.get(codeLines.size() - 1).isReturnStatement()) {
+			sb.append(new CodeLine(OpCode.RETURN));
 			sb.append("\n");
 		}
 		

@@ -48,22 +48,25 @@
         <constant_integer index="12">
             <bytes>10</bytes>
         </constant_integer>
-        <constant_utf8 index="13">
+        <constant_integer index="13">
+            <bytes>4</bytes>
+        </constant_integer>
+        <constant_utf8 index="14">
             <bytes>doIt</bytes>
         </constant_utf8>
-        <constant_utf8 index="14">
-            <bytes>(I)I</bytes>
+        <constant_utf8 index="15">
+            <bytes>(I - integer)I</bytes>
         </constant_utf8>
-        <constant_name_and_type index="15">
-            <!--doIt: (I)I-->
-            <name_index>13</name_index>
-            <descriptor_index>14</descriptor_index>
-        </constant_name_and_type>
-        <constant_methodref index="16">
-            <!--doIt: (I)I-->
+        <constant_methodref index="17">
+            <!--doIt: (I - integer)I-->
             <class_index>3</class_index>
-            <name_and_type_index>15</name_and_type_index>
+            <name_and_type_index>16</name_and_type_index>
         </constant_methodref>
+        <constant_name_and_type index="16">
+            <!--doIt: (I - integer)I-->
+            <name_index>14</name_index>
+            <descriptor_index>15</descriptor_index>
+        </constant_name_and_type>
     </constant_pool>
     <this_class>3</this_class>
     <field_info>
@@ -86,10 +89,15 @@
                         <max_locals>1</max_locals>
                         <code>
 LDC_W 12
-INVOKESTATIC just.grammar.codegeneration.Descriptor@462c65f5
+INVOKESTATIC -1
+ISTORE -1
+GETSTATIC 7
+IADD 
+LDC_W 13
 ISTORE -1
 ILOAD -1
 PUTSTATIC 7
+RETURN 
 </code>
                     </info>
                 </attribute>
@@ -97,8 +105,8 @@ PUTSTATIC 7
         </method>
         <method>
             <!--doIt-->
-            <name_index>13</name_index>
-            <descriptor_index>14</descriptor_index>
+            <name_index>14</name_index>
+            <descriptor_index>15</descriptor_index>
             <attribute_info>
                 <attribute>
                     <attribute_name_index>1</attribute_name_index>
@@ -107,6 +115,7 @@ PUTSTATIC 7
                         <max_locals>1</max_locals>
                         <code>
 ILOAD -1
+IRETURN 
 </code>
                     </info>
                 </attribute>

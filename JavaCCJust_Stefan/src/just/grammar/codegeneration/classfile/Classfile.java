@@ -76,7 +76,7 @@ public class Classfile {
 				return tempConst;
 			}
 		} else if(constant instanceof ValueConstant) {
-			Constant tempConst = getValueConstant(((ValueConstant)constant).getBytes());
+			Constant tempConst = getValueConstant(((ValueConstant)constant).getSymbol());
 			if(tempConst != null) {
 				return tempConst;
 			}
@@ -116,7 +116,7 @@ public class Classfile {
 	
 	public Constant addMethodConstant(MethodSymbol method, Scope scope) {
 		if(method.kind == Kind.funcKind) {
-			String methodSignature = String.format("(%s)%s", method.getParamsAsString(), method.type.getName());
+			String methodSignature = String.format("(%s)%s", method.getParamsAsString(), method.type.getShortName());
 			
 			//add method name and method signature to constant pool
 			Constant constant = this.addNameTypeConstant(method.spix, methodSignature);
@@ -137,8 +137,12 @@ public class Classfile {
 		return null;
 	}
 	
-	public Constant addValueConstant(String bytes, String type) {
-		return addConstant(new ValueConstant(bytes, type));
+	public Constant addValueConstant(Symbol symbol) {
+		Constant constant = addConstant(new ValueConstant(symbol));
+		
+		symbol.addr = constant.getIndex();
+		
+		return constant;
 	}
 	
 	private Constant addNameTypeConstant(int nameSpix, String type) {
@@ -157,7 +161,7 @@ public class Classfile {
 	}
 	
 	private Constant addTypeConstant(Symbol symbol) {
-		return addConstant(new UTF8Constant(symbol.type.getName()));
+		return addConstant(new UTF8Constant(symbol.type.getShortName()));
 	}
 	
 	private Constant getUTF8Constant(String bytes) {
@@ -170,9 +174,9 @@ public class Classfile {
 		return null;
 	}
 	
-	private Constant getValueConstant(String bytes) {
+	private Constant getValueConstant(Symbol symbol) {
 		for (Constant constant : this.constants.values()) {
-			if(constant instanceof ValueConstant && ((ValueConstant)constant).getBytes().equals(bytes)) {
+			if(constant instanceof ValueConstant && ((ValueConstant)constant).getSymbol().val == symbol.val) {
 				return constant;
 			}
 		}

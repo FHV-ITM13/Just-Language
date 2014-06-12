@@ -4,7 +4,7 @@ program ATest {
 	function void main() {
 		int a;
    		a = call doIt(10);
-
+		a = global + 4;
    		global = a;
    	}
    	

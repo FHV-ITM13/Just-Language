@@ -18,12 +18,22 @@
 	    int spix = nameList.insert(token.image);	    symbol = new MethodSymbol(spix);	    symbolTable.insert(symbol);
 	    //TODO fixup
     }
-    	codeGen.emit2(OpCode.INVOKESTATIC, codeGen.newDescriptor(symbol));
-  }}void ActParList() :{}{  Expr()  (    < SEPERATOR > Expr()  )*}void IfStat() :{}{  < IF > < ROUNDBRACKETOPEN > Expr() < ROUNDBRACKETCLOSE >  {    symbolTable.enterScope("if");  }  Block()  {    symbolTable.leaveScope();  }  (    < ELSE >    {      symbolTable.enterScope("else");    }    Block()    {      symbolTable.leaveScope();    }  )?}void WhileStat() :{}{  < WHILE > < ROUNDBRACKETOPEN > Expr() < ROUNDBRACKETCLOSE >  {    symbolTable.enterScope("while");  }  Block()  {    symbolTable.leaveScope();  }}void ReturnStat() :{}{  < RETURN >  (    Expr()  )?  < END >}void Expr() :{}{  OrExpr()}void OrExpr() :{}{  AndExpr()  (    < OR > AndExpr()  )*}void AndExpr() :{}{  RelExpr()  (    < AND > RelExpr()  )*}void RelExpr() :{}{  SimpleExpr()  (    (      ComparisonOperators()    )    SimpleExpr()  )?}void SimpleExpr() :{}{  (    PlusMinus()  )?  Term()  (    PlusMinus() Term()  )*}void PlusMinus() :{}{  < PLUS >  {    codeGen.emit(OpCode.IADD);  }| < MINUS >  {    codeGen.emit(OpCode.ISUB);  }}void Term() :{}{  NotFact()  (    MuliplyDivide() NotFact()  )*}void NotFact() :{}{  (< NOT >)? Fact()}void Fact() :{
+    	codeGen.call(codeGen.newDescriptor(symbol));
+  }}void ActParList() :{}{  Expr()  (    < SEPERATOR > Expr()  )*}void IfStat() :{}{  < IF > < ROUNDBRACKETOPEN > Expr() < ROUNDBRACKETCLOSE >  {    symbolTable.enterScope("if");  }  Block()  {    symbolTable.leaveScope();  }  (    < ELSE >    {      symbolTable.enterScope("else");    }    Block()    {      symbolTable.leaveScope();    }  )?}void WhileStat() :{}{  < WHILE > < ROUNDBRACKETOPEN > Expr() < ROUNDBRACKETCLOSE >  {    symbolTable.enterScope("while");  }  Block()  {    symbolTable.leaveScope();  }}void ReturnStat() :{}{  < RETURN >  (    Expr()  )?  < END >
+  {
+    codeGen.emit(OpCode.IRETURN);  }}void Expr() :{}{  OrExpr()}void OrExpr() :{}{  AndExpr()  (    < OR > AndExpr()  )*}void AndExpr() :{}{  RelExpr()  (    < AND > RelExpr()  )*}void RelExpr() :{}{  SimpleExpr()  (    (      ComparisonOperators()    )    SimpleExpr()  )?}void SimpleExpr() :{}{  (    PlusMinus()  )?  Term()  (    PlusMinus() Term()  )*}void PlusMinus() :{}{  < PLUS >  {    codeGen.emit(OpCode.IADD);  }| < MINUS >  {    codeGen.emit(OpCode.ISUB);  }}void Term() :{}{  NotFact()  (    MuliplyDivide() NotFact()  )*}void NotFact() :{}{  (< NOT >)? Fact()}void Fact() :{
 	Constant constant;
+	Symbol symbol;
 }{  (    < NUMBER >    {
-      constant = classfile.addValueConstant(token.image, "integer");      codeGen.emit2(OpCode.LDC_W, constant.getIndex());    }  | < TRUE >    {      constant = classfile.addValueConstant("1", "boolean");
-      codeGen.emit2(OpCode.LDC_W, constant.getIndex());
-    }  | < FALSE >    {      constant = classfile.addValueConstant("0", "boolean");
-      codeGen.emit2(OpCode.LDC_W, constant.getIndex());    }  | < IDENT >    {      Symbol symbol = symbolTable.lookup(token.image);      if (symbol != null)      {        codeGen.load(codeGen.newDescriptor(symbol));      }      else      {
+      symbol = new Symbol(nameList.insert(token.image), Kind.constKind, Type.intType);
+	  symbol.val = Integer.parseInt(token.image);
+	  constant = classfile.addValueConstant(symbol);
+      codeGen.load(codeGen.newDescriptor(symbol));    }  | < TRUE >    {      symbol = new Symbol(nameList.insert(token.image), Kind.constKind, Type.boolType);
+	  symbol.val = 1;
+	  constant = classfile.addValueConstant(symbol);
+      codeGen.load(codeGen.newDescriptor(symbol));
+    }  | < FALSE >    {      symbol = new Symbol(nameList.insert(token.image), Kind.constKind, Type.boolType);
+	  symbol.val = 0;
+	  constant = classfile.addValueConstant(symbol);
+      codeGen.load(codeGen.newDescriptor(symbol));    }  | < IDENT >    {      symbol = symbolTable.lookup(token.image);      if (symbol != null)      {        codeGen.load(codeGen.newDescriptor(symbol));      }      else      {
 		//TODO FIXUP      }    }  | CallStat()  |    (      < ROUNDBRACKETOPEN > Expr() < ROUNDBRACKETCLOSE >    )  | < NEW > Type() < RECTBRACKETOPEN > < NUMBER > < RECTBRACKETCLOSE >  )}void MuliplyDivide() :{}{  < MULTIPLY >  {    codeGen.emit(OpCode.IMUL);  }| < DIVIDE >  {    codeGen.emit(OpCode.IDIV);  }}void ComparisonOperators() :{}{  (    < EQ >    {      codeGen.emit(OpCode.IMUL);    }  | < NOTEQ >    {      codeGen.emit(OpCode.IMUL);    }  | < SMALLER >    {      codeGen.emit(OpCode.IMUL);    }  | < SMALLEREQ >    {      codeGen.emit(OpCode.IMUL);    }  | < GREATER >    {      codeGen.emit(OpCode.IMUL);    }  | < GREATEREQ >    {      codeGen.emit(OpCode.IMUL);    }  )}

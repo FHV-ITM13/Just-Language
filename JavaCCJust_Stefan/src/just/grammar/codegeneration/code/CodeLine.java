@@ -7,7 +7,7 @@ public class CodeLine {
 	private Object op;
 	
 	public CodeLine(OpCode opCode) {
-		this(opCode, -1);
+		this(opCode, null);
 	}
 	
 	public CodeLine(OpCode opCode, Object op) {
@@ -28,5 +28,14 @@ public class CodeLine {
 
 	public void setOb(Object op) {
 		this.op = op;
+	}
+	
+	public boolean isReturnStatement() {
+		return opCode == OpCode.IRETURN || opCode == OpCode.RETURN;
+	}
+	
+	@Override
+	public String toString() {
+		return opCode + " " + (op != null ? op : "");
 	}
 }

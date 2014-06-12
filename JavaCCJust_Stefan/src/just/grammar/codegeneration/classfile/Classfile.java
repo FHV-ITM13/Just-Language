@@ -10,6 +10,7 @@ import just.grammar.codegeneration.classfile.constants.FieldRefConstant;
 import just.grammar.codegeneration.classfile.constants.MethodRefConstant;
 import just.grammar.codegeneration.classfile.constants.NameTypeConstant;
 import just.grammar.codegeneration.classfile.constants.UTF8Constant;
+import just.grammar.codegeneration.classfile.constants.ValueConstant;
 import just.grammar.codegeneration.output.XMLWriter;
 import just.grammar.semantics.MethodSymbol;
 import just.grammar.semantics.NameList;
@@ -70,8 +71,13 @@ public class Classfile {
 		if (constant instanceof ClassConstant) {
 			this.classConstant = (ClassConstant) constant;
 		} else if (constant instanceof UTF8Constant) {
-			Constant tempConst = this.getUTF8Constant(((UTF8Constant) constant).getBytes());
+			Constant tempConst = getUTF8Constant(((UTF8Constant) constant).getBytes());
 			if (tempConst != null) {
+				return tempConst;
+			}
+		} else if(constant instanceof ValueConstant) {
+			Constant tempConst = getValueConstant(((ValueConstant)constant).getBytes());
+			if(tempConst != null) {
 				return tempConst;
 			}
 		}
@@ -131,6 +137,10 @@ public class Classfile {
 		return null;
 	}
 	
+	public Constant addValueConstant(String bytes, String type) {
+		return addConstant(new ValueConstant(bytes, type));
+	}
+	
 	private Constant addNameTypeConstant(int nameSpix, String type) {
 		Constant nameConst = this.addNameConstant(nameSpix);
 		Constant typeConst = this.addConstant(new UTF8Constant(type));
@@ -153,6 +163,16 @@ public class Classfile {
 	private Constant getUTF8Constant(String bytes) {
 		for (Constant constant : this.constants.values()) {
 			if(constant instanceof UTF8Constant && ((UTF8Constant)constant).getBytes().equals(bytes)) {
+				return constant;
+			}
+		}
+		
+		return null;
+	}
+	
+	private Constant getValueConstant(String bytes) {
+		for (Constant constant : this.constants.values()) {
+			if(constant instanceof ValueConstant && ((ValueConstant)constant).getBytes().equals(bytes)) {
 				return constant;
 			}
 		}

@@ -30,36 +30,39 @@
             <name_and_type_index>6</name_and_type_index>
         </constant_fieldref>
         <constant_utf8 index="8">
-            <bytes>doIt</bytes>
+            <bytes>main</bytes>
         </constant_utf8>
         <constant_utf8 index="9">
-            <bytes>(I)I</bytes>
+            <bytes>()V</bytes>
         </constant_utf8>
         <constant_name_and_type index="10">
-            <!--doIt: (I)I-->
+            <!--main: ()V-->
             <name_index>8</name_index>
             <descriptor_index>9</descriptor_index>
         </constant_name_and_type>
         <constant_methodref index="11">
-            <!--doIt: (I)I-->
+            <!--main: ()V-->
             <class_index>3</class_index>
             <name_and_type_index>10</name_and_type_index>
         </constant_methodref>
-        <constant_utf8 index="12">
-            <bytes>main</bytes>
-        </constant_utf8>
+        <constant_integer index="12">
+            <bytes>10</bytes>
+        </constant_integer>
         <constant_utf8 index="13">
-            <bytes>()V</bytes>
+            <bytes>doIt</bytes>
         </constant_utf8>
-        <constant_name_and_type index="14">
-            <!--main: ()V-->
-            <name_index>12</name_index>
-            <descriptor_index>13</descriptor_index>
+        <constant_utf8 index="14">
+            <bytes>(I)I</bytes>
+        </constant_utf8>
+        <constant_name_and_type index="15">
+            <!--doIt: (I)I-->
+            <name_index>13</name_index>
+            <descriptor_index>14</descriptor_index>
         </constant_name_and_type>
-        <constant_methodref index="15">
-            <!--main: ()V-->
+        <constant_methodref index="16">
+            <!--doIt: (I)I-->
             <class_index>3</class_index>
-            <name_and_type_index>14</name_and_type_index>
+            <name_and_type_index>15</name_and_type_index>
         </constant_methodref>
     </constant_pool>
     <this_class>3</this_class>
@@ -72,7 +75,7 @@
     </field_info>
     <method_info>
         <method>
-            <!--doIt-->
+            <!--main-->
             <name_index>8</name_index>
             <descriptor_index>9</descriptor_index>
             <attribute_info>
@@ -82,16 +85,20 @@
                         <max_stack>1</max_stack>
                         <max_locals>1</max_locals>
                         <code>
+LDC_W 12
+INVOKESTATIC just.grammar.codegeneration.Descriptor@462c65f5
+ISTORE -1
 ILOAD -1
+PUTSTATIC 7
 </code>
                     </info>
                 </attribute>
             </attribute_info>
         </method>
         <method>
-            <!--main-->
-            <name_index>12</name_index>
-            <descriptor_index>13</descriptor_index>
+            <!--doIt-->
+            <name_index>13</name_index>
+            <descriptor_index>14</descriptor_index>
             <attribute_info>
                 <attribute>
                     <attribute_name_index>1</attribute_name_index>
@@ -99,11 +106,7 @@ ILOAD -1
                         <max_stack>1</max_stack>
                         <max_locals>1</max_locals>
                         <code>
-LDC_W 10
-INVOKESTATIC just.grammar.codegeneration.Descriptor@18963b33
-ISTORE -1
 ILOAD -1
-PUTSTATIC 7
 </code>
                     </info>
                 </attribute>

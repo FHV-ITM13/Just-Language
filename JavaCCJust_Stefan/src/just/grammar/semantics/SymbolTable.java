@@ -2,8 +2,6 @@ package just.grammar.semantics;
 
 import java.util.LinkedList;
 
-import just.grammar.semantics.Symbol.Kind;
-
 public class SymbolTable {
 	public static SymbolTable SymbolTable = new SymbolTable();
 	private LinkedList<Scope> scopes = new LinkedList<Scope>();
@@ -26,8 +24,11 @@ public class SymbolTable {
 	}
 
 	public void leaveScope() {
-		currScope = currScope.outer;
-		--this.curLevel;
+		//last scope should be the root scope
+		if(currScope.outer != null) {
+			currScope = currScope.outer;
+			--this.curLevel;
+		}
 	}
 
 	public void insert(Symbol symbol) {
@@ -53,20 +54,16 @@ public class SymbolTable {
 		return null;
 	}
 	
-	private Symbol findSymbolInScopeTree(Integer spix) {
+	public Symbol findSymbolInScopeTree(Integer spix) {
 		Scope scope = currScope;
 		
-		while(scope != null) {
-			Symbol curr = scope.locals;
+		while(scope != null) {			
+			Symbol curr = scope.findSymbol(spix);
 
-			while(curr != null) {
-				if(spix.equals(curr.spix)) {
-					return curr;
-				}
-				
-				curr = curr.next;
+			if(curr != null) {
+				return curr;
 			}
-		
+			
 			scope = scope.outer;
 		}
 		

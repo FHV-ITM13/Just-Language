@@ -18,10 +18,10 @@ public class UTF8Constant extends Constant {
 	@Override
 	public Element writeXml(Document doc) {
 		Element element = doc.createElement("constant_utf8");
-		element.setAttribute("index", this.getIndex() + "");
-		Element bytes = doc.createElement("bytes");
-		bytes.appendChild(doc.createTextNode(this.bytes));
-		element.appendChild(bytes);
+		element.setAttribute("index", String.valueOf(getIndex()));
+		Element bytesElem = doc.createElement("bytes");
+		bytesElem.appendChild(doc.createTextNode(String.valueOf(bytes)));
+		element.appendChild(bytesElem);
 		
 		return element;
 	}

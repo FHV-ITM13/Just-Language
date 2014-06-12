@@ -21,7 +21,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class XMLWriter {
-	public static void write(String fileName, Classfile classFile) {
+	public static boolean write(String fileName, Classfile classFile) {
 		DocumentBuilderFactory icFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder icBuilder;
 		try {
@@ -81,7 +81,10 @@ public class XMLWriter {
 			out.close();
 		} catch (Exception e) {
 			e.printStackTrace();
+			return false;
 		}
+		
+		return true;
 	}
 	
 	private static Node getNode(Document doc, String name, String value) {

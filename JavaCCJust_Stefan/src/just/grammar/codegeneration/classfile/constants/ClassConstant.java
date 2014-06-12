@@ -26,7 +26,7 @@ public class ClassConstant extends Constant {
 		Element element = doc.createElement("constant_class");
 		element.setAttribute("index", this.getIndex() + "");
 		Element name = doc.createElement("name_index");
-		name.appendChild(doc.createTextNode(this.nameConst.getIndex() + ""));
+		name.appendChild(doc.createTextNode(String.valueOf(nameConst.getIndex())));
 		element.appendChild(name);
 
 		return element;

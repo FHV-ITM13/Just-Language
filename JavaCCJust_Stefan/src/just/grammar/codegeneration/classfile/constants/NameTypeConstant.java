@@ -24,13 +24,13 @@ public class NameTypeConstant extends Constant {
 	@Override
 	public Element writeXml(Document doc) {
 		Element element = doc.createElement("constant_name_and_type");
-		element.setAttribute("index", this.getIndex() + "");
+		element.setAttribute("index", String.valueOf(getIndex()));
 		element.appendChild(doc.createComment(name.getBytes() + ": " + descriptor.getBytes()));
 		
 		Element nameElem = doc.createElement("name_index");
-		nameElem.appendChild(doc.createTextNode("" + name.getIndex()));
+		nameElem.appendChild(doc.createTextNode(String.valueOf(name.getIndex())));
 		Element typeElem = doc.createElement("descriptor_index");
-		typeElem.appendChild(doc.createTextNode("" + descriptor.getIndex()));
+		typeElem.appendChild(doc.createTextNode(String.valueOf(descriptor.getIndex())));
 
 		element.appendChild(nameElem);
 		element.appendChild(typeElem);

@@ -1,14 +1,13 @@
-program ATest {
-	int global;
-
+program ATest {	
 	function void main() {
 		int a;
    		a = call doIt(10);
-		a = global + 4;
    		global = a;
    	}
    	
-   	function int doIt(int i) {
+   	int global;
+
+	function int doIt(int i, int z) {
 		return i;
 	}
 }

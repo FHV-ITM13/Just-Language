@@ -17,11 +17,11 @@ public class Field {
 		element.appendChild(doc.createComment(fieldRef.getNameAndType().getName().getBytes()));
 		
 		Element nameIndex = doc.createElement("name_index");
-		nameIndex.appendChild(doc.createTextNode("" + fieldRef.getNameAndType().getName().getIndex()));
+		nameIndex.appendChild(doc.createTextNode(String.valueOf(fieldRef.getNameAndType().getName().getIndex())));
 		element.appendChild(nameIndex);
 
 		Element descriptorIndex = doc.createElement("descriptor_index");
-		descriptorIndex.appendChild(doc.createTextNode("" + fieldRef.getNameAndType().getDescriptor().getIndex()));
+		descriptorIndex.appendChild(doc.createTextNode(String.valueOf(fieldRef.getNameAndType().getDescriptor().getIndex())));
 		element.appendChild(descriptorIndex);
 
 		return element;

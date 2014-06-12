@@ -22,12 +22,11 @@ public class ValueConstant extends Constant {
 
 	@Override
 	public Element writeXml(Document doc) {
-		Element element = doc.createElement("constant_"
-				+ symbol.type.getLongName());
-		element.setAttribute("index", this.getIndex() + "");
+		Element element = doc.createElement("constant_"	+ symbol.type.getLongName());
+		element.setAttribute("index", String.valueOf(getIndex()));
 
 		Element bytesElem = doc.createElement("bytes");
-		bytesElem.appendChild(doc.createTextNode("" + symbol.val));
+		bytesElem.appendChild(doc.createTextNode(String.valueOf(symbol.val)));
 
 		element.appendChild(bytesElem);
 

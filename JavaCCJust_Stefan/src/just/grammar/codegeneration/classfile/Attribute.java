@@ -43,7 +43,7 @@ public class Attribute {
 		Element element = doc.createElement("attribute");
 		
 		Element attNameIndex = doc.createElement("attribute_name_index");
-		attNameIndex.appendChild(doc.createTextNode("" + nameIndex.getIndex()));
+		attNameIndex.appendChild(doc.createTextNode(String.valueOf(nameIndex.getIndex())));
 		
 		element.appendChild(attNameIndex);
 		
@@ -51,7 +51,7 @@ public class Attribute {
 		maxStack.appendChild(doc.createTextNode("1"));
 
 		Element maxLocals = doc.createElement("max_locals");
-		maxLocals.appendChild(doc.createTextNode("" + (scope.nrOfLocals + scope.nrOfParams)));
+		maxLocals.appendChild(doc.createTextNode(String.valueOf((scope.nrOfLocals + scope.nrOfParams))));
 		
 		Element code = doc.createElement("code");
 		code.appendChild(doc.createTextNode(methodCode.toString()));

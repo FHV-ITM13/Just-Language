@@ -2,6 +2,7 @@ package just.grammar.codegeneration;
 
 import just.grammar.codegeneration.code.CodeLine;
 import just.grammar.codegeneration.code.MethodCode;
+import just.grammar.codegeneration.fixup.RefFixUp;
 import just.grammar.semantics.Symbol;
 import just.grammar.semantics.Symbol.Kind;
 
@@ -10,46 +11,40 @@ public class CodeGen {
 	
 	private MethodCode currCode;
 	
-	private CodeGen() {
-		
-	}
+	private CodeGen() {	}
 	
 	public void store(Descriptor desc) {
 		switch (desc.kind) {
 		case descConst:
-			emit2(OpCode.LDC_W, desc.getAddress());
+			emit2(OpCode.LDC_W, desc);
 			break;
 		case descArg:
-			emit2(OpCode.ISTORE, desc.getAddress());
+			emit2(OpCode.ISTORE, desc);
 			break;
 		case descLocal:
-			emit2(OpCode.ISTORE, desc.getAddress());
+			emit2(OpCode.ISTORE, desc);
 			break;
 		case descField:
-			emit2(OpCode.PUTSTATIC, desc.getAddress());
-			markFieldFixup(desc.symbol.spix);
+			emit2(OpCode.PUTSTATIC, new RefFixUp(desc));
 			break;
 		case descStack:
 			break;
 		}
-		
-		desc.kind = DescKind.descStack;
 	}
 	
 	public void load(Descriptor desc) {
 		switch (desc.kind) {
 		case descConst:
-			emit2(OpCode.LDC_W, desc.getAddress());
+			emit2(OpCode.LDC_W, desc);
 			break;
 		case descArg:
-			emit2(OpCode.ILOAD, desc.getAddress());
+			emit2(OpCode.ILOAD, desc);
 			break;
 		case descLocal:
-			emit2(OpCode.ILOAD, desc.getAddress());
+			emit2(OpCode.ILOAD, desc);
 			break;
 		case descField:
-			emit2(OpCode.GETSTATIC, desc.getAddress());
-			markFieldFixup(desc.symbol.spix);
+			emit2(OpCode.GETSTATIC, new RefFixUp(desc));
 			break;
 		case descStack:
 			break;
@@ -60,11 +55,10 @@ public class CodeGen {
 	
 	public void call(Descriptor desc) {
 		if(desc.symbol.kind == Kind.funcKind) {
-			emit2(OpCode.INVOKESTATIC, desc.getAddress());
-			markMethodFixup(desc.symbol.spix);
+			emit2(OpCode.INVOKESTATIC, new RefFixUp(desc));
 		}
 	}
-	
+
 	public Descriptor newDescriptor(Symbol symbol) {
 		return new Descriptor(symbol);
 	}
@@ -77,15 +71,6 @@ public class CodeGen {
 		currCode.addCodeLine(new CodeLine(opCode));
 	}
 
-	public void markFieldFixup(int spix) {
-
-	}
-
-	private void markMethodFixup(int spix) {
-		// TODO Auto-generated method stub
-		
-	}
-	
 	public MethodCode getCurrCode() {
 		return currCode;
 	}

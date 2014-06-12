@@ -152,8 +152,8 @@ public class Classfile {
 		return addConstant(new NameTypeConstant(nameConst, typeConst));
 	}
 
-	public void write(String fileName) {
-		XMLWriter.write(fileName, this);
+	public boolean generateClassfile(String fileName) {
+		return XMLWriter.write(fileName, this);
 	}
 	
 	private Constant addNameConstant(int spix) {

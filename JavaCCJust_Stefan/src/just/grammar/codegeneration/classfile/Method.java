@@ -36,11 +36,11 @@ public class Method {
 		element.appendChild(doc.createComment(methodRef.getNameAndType().getName().getBytes()));
 		
 		Element nameIndex = doc.createElement("name_index");
-		nameIndex.appendChild(doc.createTextNode("" + methodRef.getNameAndType().getName().getIndex()));
+		nameIndex.appendChild(doc.createTextNode(String.valueOf( methodRef.getNameAndType().getName().getIndex())));
 		element.appendChild(nameIndex);
 		
 		Element descriptorIndex = doc.createElement("descriptor_index");
-		descriptorIndex.appendChild(doc.createTextNode("" + methodRef.getNameAndType().getDescriptor().getIndex()));
+		descriptorIndex.appendChild(doc.createTextNode(String.valueOf(methodRef.getNameAndType().getDescriptor().getIndex())));
 		element.appendChild(descriptorIndex);
 		
 		Element attributeInfo = doc.createElement("attribute_info");		

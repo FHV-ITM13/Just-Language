@@ -40,12 +40,12 @@ public class MethodRefConstant extends Constant {
 	@Override
 	public Element writeXml(Document doc) {
 		Element element = doc.createElement("constant_methodref");
-		element.setAttribute("index", getIndex() + "");
+		element.setAttribute("index", String.valueOf(getIndex()));
 		element.appendChild(doc.createComment(nameAndType.getName().getBytes() + ": " + nameAndType.getDescriptor().getBytes()));
 		Element clazz = doc.createElement("class_index");
-		clazz.appendChild(doc.createTextNode("" + classIndex.getIndex()));
+		clazz.appendChild(doc.createTextNode(String.valueOf(classIndex.getIndex())));
 		Element nt = doc.createElement("name_and_type_index");
-		nt.appendChild(doc.createTextNode("" + nameAndType.getIndex()));
+		nt.appendChild(doc.createTextNode(String.valueOf(nameAndType.getIndex())));
 
 		element.appendChild(clazz);
 		element.appendChild(nt);

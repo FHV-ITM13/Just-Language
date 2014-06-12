@@ -42,4 +42,9 @@ public class Descriptor {
 			break;
 		}
 	}
+	
+	@Override
+	public String toString() {
+		return String.valueOf(getAddress());
+	}
 }

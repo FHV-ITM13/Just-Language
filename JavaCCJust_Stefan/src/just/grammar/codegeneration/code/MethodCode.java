@@ -24,13 +24,15 @@ public class MethodCode {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append('\n');
-		
+
 		for (CodeLine codeLine : codeLines) {
+			sb.append("				");
 			sb.append(codeLine);
 			sb.append("\n");
 		}
 		
-		if(!codeLines.get(codeLines.size() - 1).isReturnStatement()) {
+		if(codeLines.size() == 0 || !codeLines.get(codeLines.size() - 1).isReturnStatement()) {
+			sb.append("				");
 			sb.append(new CodeLine(OpCode.RETURN));
 			sb.append("\n");
 		}

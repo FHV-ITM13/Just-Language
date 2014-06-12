@@ -41,4 +41,18 @@ public class Scope {
 		
 		locals = symbol;
 	}
+
+	public Symbol findSymbol(Integer spix) {
+		Symbol tempLocal = locals;
+		
+		while(tempLocal != null) {
+			if(spix.equals(tempLocal.spix)) {
+				return tempLocal;
+			}
+			
+			tempLocal = tempLocal.next;
+		}
+		
+		return null;
+	}
 }

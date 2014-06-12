@@ -51,10 +51,6 @@ public class SymbolTable {
 		}
 				
 		return null;
-//		Symbol newSymbol = new Symbol(spix, Kind.undefKind);
-//		insert(newSymbol);
-//		
-//		return newSymbol;
 	}
 	
 	private Symbol findSymbolInScopeTree(Integer spix) {

@@ -90,12 +90,12 @@
                         <code>
 LDC_W 12
 INVOKESTATIC -1
-ISTORE -1
+ISTORE 0
 GETSTATIC 7
 IADD 
 LDC_W 13
-ISTORE -1
-ILOAD -1
+ISTORE 0
+ILOAD 0
 PUTSTATIC 7
 RETURN 
 </code>
@@ -114,7 +114,7 @@ RETURN
                         <max_stack>1</max_stack>
                         <max_locals>1</max_locals>
                         <code>
-ILOAD -1
+ILOAD 0
 IRETURN 
 </code>
                     </info>

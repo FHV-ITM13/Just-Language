@@ -79,15 +79,18 @@ public class CodeGen {
 	}
 
 	public void jump(Label label) {
+		 //call emit2 with object, so that the label is normal operation
 		emit2(OpCode.GOTO, new LabelDescriptor(label));
 	}
 
 	public void falseJump(OpCode opCode, LabelDescriptor desc) {
 		desc.setLabel(createLabel());
+		 //call emit2 with object, so that the label is normal operation
 		emit2(opCode, desc);
 	}
 
 	public void markByLabel(Label label) {
+		 //call emit2 with label, so that the label clearly visible in code
 		emit2(OpCode.NOP, label);
 	}
 

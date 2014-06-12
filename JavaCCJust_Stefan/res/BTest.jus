@@ -10,8 +10,7 @@ program BTest {
 	}
 	
 	function void main() {
-		int a;
-   		a = call doIt(10);
+		int a = call doIt(10);
    		global = a;
    		call foo(true, false);
    	}

@@ -1,0 +1,13 @@
+program CTest {	
+	function void main() {
+		int a = 10;
+		int b = 5;
+		int c;
+		
+		if(a < b && a != b) {
+			c = a;
+		} else {
+			c = b;
+		}
+   	}
+}

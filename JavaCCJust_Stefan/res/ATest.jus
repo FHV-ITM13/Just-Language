@@ -7,7 +7,7 @@ program ATest {
    	
    	int global;
 
-	function int doIt(int i, int z) {
+	function int doIt(int i) {
 		return i;
 	}
 }

@@ -107,7 +107,8 @@
                         <max_stack>1</max_stack>
                         <max_locals>1</max_locals>
                         <code>
-ILOAD -1
+			ILOAD 0
+			IRETURN
 </code>
                     </info>
                 </attribute>
@@ -124,9 +125,10 @@ ILOAD -1
                         <max_stack>1</max_stack>
                         <max_locals>2</max_locals>
                         <code>
-ILOAD -1
-IADD -1
-ILOAD -1
+			ILOAD 0
+			ILOAD 1
+			IADD
+			IRETURN
 </code>
                     </info>
                 </attribute>
@@ -143,13 +145,14 @@ ILOAD -1
                         <max_stack>1</max_stack>
                         <max_locals>1</max_locals>
                         <code>
-LDC_W 20
-INVOKESTATIC 11
-ILOAD -1
-PUTSTATIC 7
-LDC_W 21
-LDC_W 22
-INVOKESTATIC 15
+			LDC_W 20
+			INVOKESTATIC 11
+			ILOAD 0
+			PUTSTATIC 7
+			LDC_W 21
+			LDC_W 22
+			INVOKESTATIC 15
+			RETURN
 </code>
                     </info>
                 </attribute>

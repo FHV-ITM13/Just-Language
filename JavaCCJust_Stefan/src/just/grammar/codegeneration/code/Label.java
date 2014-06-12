@@ -8,6 +8,6 @@ public class Label {
 	}
 
 	public String toString() {
-		return this.label;
+		return label;
 	}
 }

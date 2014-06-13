@@ -1,0 +1,22 @@
+program RealTest {	
+	int globalLimit;
+	
+	function void main() {
+		int i = 0;
+		globalLimit = 10;
+		
+		while(i <= globalLimit) {
+			i = call doIt(i);
+		}
+   	}
+   	
+	function int doIt(int i) {
+		if(i < globalLimit) {
+			i = i + 1;
+		} else {
+			i = i + 2;
+		}
+		
+		return i;
+   	}
+}

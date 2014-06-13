@@ -50,21 +50,22 @@
                         <max_stack>1</max_stack>
                         <max_locals>3</max_locals>
                         <code>
-			LDC_W 8
-			LDC_W 9
-			ILOAD 0
-			ILOAD 1
-			ILOAD 0
-			ILOAD 1
-			NOP
-			ILOAD 0
-			ISTORE 2
-		L 0:  GOTO
-			NOP
-			ILOAD 1
-			ISTORE 2
-		L 0:  NOP
-			RETURN
+		LDC_W 8
+		LDC_W 9
+		ILOAD 0
+		ILOAD 1
+		IF_ICMPLE L2
+		ILOAD 0
+		ILOAD 1
+		IF_ICMPNE L2
+		ILOAD 0
+		ISTORE 2
+		GOTO L3
+	L2: NOP
+		ILOAD 1
+		ISTORE 2
+	L3: NOP
+		RETURN
 </code>
                     </info>
                 </attribute>

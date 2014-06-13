@@ -11,7 +11,8 @@ program BTest {
 	
 	function void main() {
 		int a = call doIt(10);
+		boolean b;
    		global = a;
-   		call foo(true, false);
+   		b = call foo(true, false);
    	}
 }

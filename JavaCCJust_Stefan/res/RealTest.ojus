@@ -8,7 +8,7 @@
             <bytes>Code</bytes>
         </constant_utf8>
         <constant_utf8 index="2">
-            <bytes>DTest</bytes>
+            <bytes>RealTest</bytes>
         </constant_utf8>
         <constant_class index="3">
             <name_index>2</name_index>
@@ -129,15 +129,16 @@
 		ILOAD 0
 		LDC_W 18
 		IADD
-		IRETURN
+		ISTORE 0
 		GOTO L4
 	L3: NOP
 		ILOAD 0
 		LDC_W 19
 		IADD
-		IRETURN
+		ISTORE 0
 	L4: NOP
-		RETURN
+		ILOAD 0
+		IRETURN
 </code>
                     </info>
                 </attribute>

@@ -28,7 +28,7 @@ public class MethodSymbol extends Symbol {
 		StringBuilder sb = new StringBuilder();
 		
 		for (Symbol s : params) {
-			sb.append(s.type);
+			sb.append(s.type.getShortName());
 			sb.append(",");
 		}
 		

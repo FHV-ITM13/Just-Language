@@ -20,7 +20,8 @@ public class Compiler {
 			} else if (currentState == "B") {
 				currentState = acceptB(tape[sign]);
 			} else if (currentState == "C") {
-				return true;
+				// no signs are excpected after state c 
+				return false;
 			} else if (currentState == "D") {
 				currentState = acceptD(tape[sign]);
 			} else {

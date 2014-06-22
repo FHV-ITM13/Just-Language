@@ -91,10 +91,11 @@
                 <attribute>
                     <attribute_name_index>1</attribute_name_index>
                     <info>
-                        <max_stack>1</max_stack>
+                        <max_stack>10</max_stack>
                         <max_locals>1</max_locals>
                         <code>
 		LDC_W 12
+		ISTORE 0
 		LDC_W 13
 		PUTSTATIC 7
 	L1: NOP
@@ -120,7 +121,7 @@
                 <attribute>
                     <attribute_name_index>1</attribute_name_index>
                     <info>
-                        <max_stack>1</max_stack>
+                        <max_stack>10</max_stack>
                         <max_locals>1</max_locals>
                         <code>
 		ILOAD 0

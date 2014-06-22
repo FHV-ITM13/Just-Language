@@ -48,7 +48,7 @@ public class Attribute {
 		element.appendChild(attNameIndex);
 		
 		Element maxStack = doc.createElement("max_stack");
-		maxStack.appendChild(doc.createTextNode("1"));
+		maxStack.appendChild(doc.createTextNode("10")); //TODO calculate max needed stack size
 
 		Element maxLocals = doc.createElement("max_locals");
 		maxLocals.appendChild(doc.createTextNode(String.valueOf((scope.nrOfLocals + scope.nrOfParams))));

@@ -3,7 +3,7 @@ package fhv.q3;
 public class Compiler {
 
 	public static void main(String[] args) {
-		char[] tape = new char[] { 'z', 'x', 'y', 'z' };
+		char[] tape = new char[] { 'z', 'x', 'y', 'z', 'b' };
 		boolean result = accept(tape);
 		System.out.println(result ? "OK" : "NOK");
 	}
@@ -20,7 +20,8 @@ public class Compiler {
 			} else if (currentState == "B") {
 				currentState = acceptB(tape[sign]);
 			} else if (currentState == "C") {
-				return true;
+				// no signs are excpected after state c 
+				return false;
 			} else if (currentState == "D") {
 				currentState = acceptD(tape[sign]);
 			} else {

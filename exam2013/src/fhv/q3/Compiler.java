@@ -3,7 +3,7 @@ package fhv.q3;
 public class Compiler {
 
 	public static void main(String[] args) {
-		char[] tape = new char[] { 'z', 'x', 'y', 'z' };
+		char[] tape = new char[] { 'z', 'x', 'y', 'z', 'b' };
 		boolean result = accept(tape);
 		System.out.println(result ? "OK" : "NOK");
 	}

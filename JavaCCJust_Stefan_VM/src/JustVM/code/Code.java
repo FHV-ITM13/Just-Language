@@ -1,4 +1,4 @@
-package JustVM;
+package JustVM.code;
 
 public class Code {
 	private static String NewLine = "\n";

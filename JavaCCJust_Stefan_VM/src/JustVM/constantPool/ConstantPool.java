@@ -2,7 +2,7 @@ package JustVM.constantPool;
 
 import java.util.HashMap;
 
-import JustVM.Type;
+import JustVM.type.Type;
 
 public class ConstantPool {
 	private HashMap<Integer, Constant> constants;

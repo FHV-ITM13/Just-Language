@@ -1,6 +1,6 @@
 package JustVM.constantPool;
 
-import JustVM.Type;
+import JustVM.type.Type;
 
 public class Constant {
 	private int id;

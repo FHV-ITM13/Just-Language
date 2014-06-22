@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import JustVM.clazz.Clazz;
+import JustVM.clazzLoader.ClazzLoader;
 import JustVM.thread.Thread;
+import JustVM.type.Type;
+import JustVM.code.Code;
 import JustVM.constantPool.ConstantPool;
 
 public class VirtualMachine {
@@ -23,7 +26,8 @@ public class VirtualMachine {
 	public void run() {
 		ClazzLoader.load(this);
 		
-		Thread mainThread = new Thread();
+		Thread mainThread = new Thread(0);
+		
 		execute(0);
 	}
 	
@@ -44,7 +48,6 @@ public class VirtualMachine {
 		return 1;
 	}
 	
-	
-	
+
 
 } 

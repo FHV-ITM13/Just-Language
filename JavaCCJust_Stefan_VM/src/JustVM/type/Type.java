@@ -1,4 +1,4 @@
-package JustVM;
+package JustVM.type;
 
 public enum Type {
 	voidType(2), intType(4), boolType(2);

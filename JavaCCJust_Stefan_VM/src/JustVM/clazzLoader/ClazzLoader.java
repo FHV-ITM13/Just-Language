@@ -1,12 +1,14 @@
-package JustVM;
+package JustVM.clazzLoader;
 
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 
+import JustVM.VirtualMachine;
 import JustVM.clazz.Clazz;
 import JustVM.clazz.ClazzVar;
 import JustVM.clazz.Method;
+import JustVM.type.Type;
 
 public class ClazzLoader {
 

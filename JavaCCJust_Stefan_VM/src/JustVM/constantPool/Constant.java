@@ -4,11 +4,11 @@ import JustVM.type.Type;
 
 public class Constant {
 	private int id;
-	private byte[] value;
+	private int value; //TODO should be byte[]
 	private Type type;
 	private String name;
 	
-	public Constant(String name, int id, byte[] value, Type type) {
+	public Constant(String name, int id, int value, Type type) {
 		this.id = id;
 		this.value = value;
 		this.type = type;
@@ -23,11 +23,11 @@ public class Constant {
 		this.id = id;
 	}
 
-	public byte[] getValue() {
+	public int getValue() {
 		return value;
 	}
 
-	public void setValue(byte[] value) {
+	public void setValue(int value) {
 		this.value = value;
 	}
 

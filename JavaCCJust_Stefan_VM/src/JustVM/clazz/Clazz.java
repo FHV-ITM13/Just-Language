@@ -1,27 +1,33 @@
 package JustVM.clazz;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 public class Clazz {
 	private String name;
-	private List<Method> methods;
-	private List<ClazzVar> clazzVars;
+	private HashMap<Integer, Method> methods;
+	private HashMap<String, ClazzVar> clazzVars;
 	
 	public Clazz(String name) {
 		this.name = name;
-		methods = new ArrayList<Method>();
-		clazzVars = new ArrayList<ClazzVar>();
+		methods = new HashMap<Integer, Method>();
+		clazzVars = new HashMap<String, ClazzVar>();
 	}
 	
 	public void addMethod(Method method) {
-		methods.add(method);
+		methods.put(method.getStartAddr(), method);
+	}
+	
+	public Method getMethod(Integer startAddr) {
+		return methods.get(startAddr);
 	}
 	
 	public void addClazzVar(ClazzVar clazzVar) {
-		clazzVars.add(clazzVar);
+		clazzVars.put(clazzVar.getName(), clazzVar);
 	}
 	
+	public ClazzVar getClazzVar(String name) {
+		return clazzVars.get(name);
+	}
 	
 	public void setName(String name) {
 		this.name = name;

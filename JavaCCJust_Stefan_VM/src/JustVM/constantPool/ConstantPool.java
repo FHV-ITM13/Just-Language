@@ -11,7 +11,8 @@ public class ConstantPool {
 		constants = new HashMap<>();
 	}
 	
-	public int add(String name, byte[] value, Type type) {
+	//TODO value should be byte[]
+	public int add(String name, int value, Type type) { 
 		Constant c = new Constant(name, constants.size(), value, type);
 		
 		constants.put(c.getId(), c);

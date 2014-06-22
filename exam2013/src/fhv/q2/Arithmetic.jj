@@ -4,8 +4,8 @@
 
 import fhv.q2.semantik.*;
 
-public class Arithmetic{  public static void main(String args []) throws ParseException  {    Arithmetic parser = new Arithmetic(System.in);    while (true)    {      System.out.println("Reading from standard input...");      System.out.print("Enter an expression like \"1+(2+3)*4;\" :");      try      {
-        Variables.clear();        double a = Arithmetic.evaluation();
+public class Arithmetic{  public static void main(String args []) throws ParseException  {    Arithmetic parser = new Arithmetic(System.in);    while (true)    {
+        Variables.clear();      System.out.println("Reading from standard input...");      System.out.print("Enter an expression like \"a=1;b=2;1+(a+3)*b=\" :");      try      {        double a = Arithmetic.evaluation();
         System.out.println(a);      }      catch (Exception e)      {        System.out.println("NOK.");        System.out.println(e.getMessage());        Arithmetic.ReInit(System.in);      }      catch (Error e)      {        System.out.println("Oops.");        System.out.println(e.getMessage());        break;      }    }  }}PARSER_END(Arithmetic)SKIP :{  " "| "\r"| "\t"| "\n"}TOKEN :{  < NUMBER : (< DIGIT >)+ >| < #DIGIT : [ "0"-"9" ] >
 | < VAR : (< SIGN >)+ >
 | < #SIGN : [ "a"-"z" ] >}
@@ -16,7 +16,9 @@ double evaluation():{
   )*
   value = expr()
   "="
-  {    return value;
+  {
+    
+    Variables.check();    return value;
   }}
 
 void assign():{

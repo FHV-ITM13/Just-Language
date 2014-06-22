@@ -9,11 +9,11 @@ public class Arithmetic implements ArithmeticConstants {
     Arithmetic parser = new Arithmetic(System.in);
     while (true)
     {
+        Variables.clear();
       System.out.println("Reading from standard input...");
-      System.out.print("Enter an expression like \u005c"1+(2+3)*4;\u005c" :");
+      System.out.print("Enter an expression like \u005c"a=1;b=2;1+(a+3)*b=\u005c" :");
       try
       {
-        Variables.clear();
         double a = Arithmetic.evaluation();
         System.out.println(a);
       }
@@ -48,6 +48,7 @@ public class Arithmetic implements ArithmeticConstants {
     }
     value = expr();
     jj_consume_token(9);
+    Variables.check();
     {if (true) return value;}
     throw new Error("Missing return statement in function");
   }

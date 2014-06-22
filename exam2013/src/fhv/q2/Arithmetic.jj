@@ -1,0 +1,83 @@
+/**
+ * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
+ */options{  JDK_VERSION = "1.5";  static = true;}PARSER_BEGIN(Arithmetic)package fhv.q2;
+
+import fhv.q2.semantik.*;
+
+public class Arithmetic{  public static void main(String args []) throws ParseException  {    Arithmetic parser = new Arithmetic(System.in);    while (true)    {
+        Variables.clear();      System.out.println("Reading from standard input...");      System.out.print("Enter an expression like \"a=1;b=2;1+(a+3)*b=\" :");      try      {        double a = Arithmetic.evaluation();
+        System.out.println(a);      }      catch (Exception e)      {        System.out.println("NOK.");        System.out.println(e.getMessage());        Arithmetic.ReInit(System.in);      }      catch (Error e)      {        System.out.println("Oops.");        System.out.println(e.getMessage());        break;      }    }  }}PARSER_END(Arithmetic)SKIP :{  " "| "\r"| "\t"| "\n"}TOKEN :{  < NUMBER : (< DIGIT >)+ >| < #DIGIT : [ "0"-"9" ] >
+| < VAR : (< SIGN >)+ >
+| < #SIGN : [ "a"-"z" ] >}
+
+double evaluation():{
+  double value;}{
+  (    assign()
+  )*
+  value = expr()
+  "="
+  {
+    
+    Variables.check();    return value;
+  }}
+
+void assign():{
+  Token var;
+  Token number;}{
+  var = < VAR >
+  < "=" > 
+  number = < NUMBER >
+  < ";" >
+  {
+    Variables.setVar(var.image, number.image);  }}
+double expr():
+{
+  double value;
+  double term;
+}
+{  value = term()
+  (
+    "+"
+    term = term()
+    {
+      value += term;    }
+  | "-"
+    term = term()
+    {
+      value -= term;    }
+  )*
+  {
+    return value;  }
+}
+
+double term():
+{
+  double value;
+  double factor;}{
+  value = factor()
+  (
+    "*"
+    factor = factor()
+    {
+      value *= factor;    }
+  | "/"
+    factor = factor()
+    {
+      value /= factor;
+    }
+  )*
+  {
+    return value;  }}
+
+double factor():
+{
+  Token number;
+  Token var;
+  double value;}{
+  number = < NUMBER >  {
+    return Integer.parseInt(number.image);  }
+| var = < VAR >  {
+    return Variables.getVar(var.image);  }
+| "(" value = expr() ")"
+  {
+    return value;  }}

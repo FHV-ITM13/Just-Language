@@ -1,0 +1,18 @@
+program BTest {
+	int global;
+
+	function int doIt(int i) {
+		return i;
+	}
+	
+	function boolean foo(boolean b1, boolean b2) {
+		return b1 + b2;
+	}
+	
+	function void main() {
+		int a = call doIt(10);
+		boolean b;
+   		global = a;
+   		b = call foo(true, false);
+   	}
+}

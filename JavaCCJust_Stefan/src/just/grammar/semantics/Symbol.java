@@ -2,9 +2,13 @@ package just.grammar.semantics;
 
 public class Symbol {
 	public enum Kind {
-		undefKind, constKind, varKind, parKind, funcKind, fieldKind
+		undefKind, constKind, varKind, parKind, funcKind, fieldKind, programKind
 	};
+	
+	public static int syCounter = 0;
 
+	public int syId; 
+	
 	public int spix; // Spelling index for name list
 	public Kind kind;
 	public Type type; // data type
@@ -25,6 +29,10 @@ public class Symbol {
 	public Symbol(int spix, Kind kind) {
 		this.spix = spix;
 		this.kind = kind;
+		this.addr = -1;
+		this.type = Type.undefType;
+		
+		syId = syCounter++;
 	}
 	
 	public Symbol(int spix, Kind kind, Type type) {

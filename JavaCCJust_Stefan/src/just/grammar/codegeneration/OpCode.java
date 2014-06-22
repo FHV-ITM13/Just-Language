@@ -9,6 +9,7 @@ public enum OpCode {
 	ILOAD,// <index8>
 	PUTSTATIC,// <index8>
 	GETSTATIC,// <index8>
+	
 	IADD,
 	ISUB,
 	IMUL,
@@ -16,19 +17,17 @@ public enum OpCode {
 	IAND,
 	IOR,
 	INEG,
-	IF_ICMPEQ,// <branchoffset16>
-	IF_ICMPNE,// <branchoffset16>
-	IF_ICMPLT,// <branchoffset16>
-	IF_ICMPGE,// <branchoffset16>
-	IF_ICMPGT,// <branchoffset16>
-	IF_ICMPLE,// <branchoffset16>
+	
+	IF_ICMPEQ,// <branchoffset16> compare equal
+	IF_ICMPNE,// <branchoffset16> compare not equal
+	IF_ICMPGE,// <branchoffset16> value2 is less than value1
+	IF_ICMPGT,// <branchoffset16> value2 is less than or equal to value1
+	IF_ICMPLE,// <branchoffset16> value2 is greater than value1
+	IF_ICMPLT,// <branchoffset16> value2 is greater than or equal to value1
+
+	
 	GOTO,// <branchoffset16>
 	INVOKESTATIC,// <index16>
 	RETURN,
 	IRETURN,
-	ALOAD,// <index8>
-	ASTORE,// <index8>
-	NEWARRAY,// <index16>
-	IALOAD,
-	IASTORE
 }

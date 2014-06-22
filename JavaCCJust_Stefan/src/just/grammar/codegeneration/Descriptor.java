@@ -4,17 +4,23 @@ import just.grammar.semantics.Symbol;
 import just.grammar.semantics.Symbol.Kind;
 
 public class Descriptor {
-	public int address;
 	public Symbol symbol;
 	public DescKind kind;
 	
 	public Descriptor(Symbol symbol) {
-		this.address = -1; //TODO
 		this.symbol = symbol;
 		
 		defineKind(symbol.kind);
 	}
+	
+	public int getAddress() {
+		return symbol.addr;
+	}
 
+	public Symbol getSymbol() {
+		return symbol;
+	}
+	
 	private void defineKind(Kind syKind) {
 		switch (syKind) {
 		case constKind:
@@ -37,4 +43,8 @@ public class Descriptor {
 		}
 	}
 	
+	@Override
+	public String toString() {
+		return String.valueOf(getAddress());
+	}
 }

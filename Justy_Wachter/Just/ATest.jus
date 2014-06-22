@@ -2,7 +2,7 @@
 program ATest {
 	var int global;
 
-	int doIt(int i) {
+	int doIt(int i, int z) {
 		return i;
 	}
 	

@@ -2,21 +2,20 @@ package just.grammar.semantics;
 
 import java.util.LinkedList;
 
-import just.grammar.semantics.Symbol.Kind;
-
 public class SymbolTable {
 	public static SymbolTable SymbolTable = new SymbolTable();
 	private LinkedList<Scope> scopes = new LinkedList<Scope>();
 	
-	private int curLevel;
-	private Scope currScope;
+	private int curLevel = -1;
+	private Scope currScope = null;
 
-	public SymbolTable() {
-		curLevel = 0;
-		currScope = new Scope("program");
-		scopes.add(currScope);
+	private SymbolTable() {
 	}
 
+	public Scope getCurrentScope() {
+		return currScope;
+	}
+	
 	public void enterScope(String name) {
 		++this.curLevel;
 
@@ -25,8 +24,11 @@ public class SymbolTable {
 	}
 
 	public void leaveScope() {
-		currScope = currScope.outer;
-		--this.curLevel;
+		//last scope should be the root scope
+		if(currScope.outer != null) {
+			currScope = currScope.outer;
+			--this.curLevel;
+		}
 	}
 
 	public void insert(Symbol symbol) {
@@ -34,7 +36,7 @@ public class SymbolTable {
 			currScope.insert(symbol);
 		}
 	}
-
+	
 	public Symbol lookup(String name) {
 		Integer spix = NameList.NameList.spixOf(name);
 		
@@ -49,27 +51,19 @@ public class SymbolTable {
 			System.err.println("WARNING: SymbolTable lookup: " + name + " not in current scope but in NameList!");
 		}
 				
-		Integer newSpix = NameList.NameList.insert(name);
-		Symbol newSymbol = new Symbol(newSpix, Kind.undefKind);
-		insert(newSymbol);
-		
-		return newSymbol;
+		return null;
 	}
 	
-	private Symbol findSymbolInScopeTree(Integer spix) {
+	public Symbol findSymbolInScopeTree(Integer spix) {
 		Scope scope = currScope;
 		
-		while(scope != null) {
-			Symbol curr = scope.locals;
+		while(scope != null) {			
+			Symbol curr = scope.findSymbol(spix);
 
-			while(curr != null) {
-				if(spix.equals(curr.spix)) {
-					return curr;
-				}
-				
-				curr = curr.next;
+			if(curr != null) {
+				return curr;
 			}
-		
+			
 			scope = scope.outer;
 		}
 		

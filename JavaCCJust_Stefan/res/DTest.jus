@@ -1,0 +1,19 @@
+program DTest {	
+	function void main() {
+		int i;
+		int limit;
+		int x;
+		
+		if(i < limit) {
+			x = i + limit;
+		} else {
+			x = i - limit;
+		}
+   	}
+   	
+	function void foo(int i, int limit) {
+		while(i != limit) {
+			i = i - 1;
+		}
+   	}
+}

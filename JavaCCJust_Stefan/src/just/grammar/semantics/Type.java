@@ -1,15 +1,25 @@
 package just.grammar.semantics;
 
 public enum Type {
-	undefType("undefined"), voidType("void"), boolType("boolean"), intType("integer"), fieldType("array");
+	undefType("UDEF", "undefined"), voidType("V", "void"), boolType("B", "boolean"), intType("I", "integer"), fieldType("A", "array");
 	
-	private final String name;       
+	private final String shortName;       
+	private final String longName;       
 
-    private Type(String s) {
-        name = s;
+    private Type(String shortName, String longName) {
+        this.shortName = shortName;
+        this.longName = longName;
     }
 
+    public String getShortName() {
+    	return shortName;
+    }
+    
+    public String getLongName() {
+    	return longName;
+    }
+    
     public String toString(){
-       return name;
+       return shortName + " - " + longName;
     }
 }

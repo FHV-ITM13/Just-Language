@@ -5,5 +5,4 @@ public class StackFrame {
 	private StackFrame prevFrame;
 	
 	private int stackPointer;
-	
 }

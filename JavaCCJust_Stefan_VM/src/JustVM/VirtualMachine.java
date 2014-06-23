@@ -34,7 +34,7 @@ public class VirtualMachine {
 		Thread mainThread = new Thread(0, this, clazzes.get(0).getMethod(0));
 		threads.add(mainThread);
 		currThread = mainThread;
-
+		
 		while(!mainThread.isFinished()) {
 			mainThread.run();
 		}
@@ -61,7 +61,6 @@ public class VirtualMachine {
 		// 0 = OpCode 1 = index of var, constant, method,...
 		String[] line = getCodeLine(pc).split(" ");
 
-		// TODO add all possible OpCodes
 		switch (line[0]) {
 		case "LDC_W":
 			ldcW(Integer.parseInt(line[1]));
@@ -76,32 +75,52 @@ public class VirtualMachine {
 			getStatic(Integer.parseInt(line[1]));
 			break;
 		case "PUTSTATIC":
-			getStatic(Integer.parseInt(line[1]));
+			putStatic(Integer.parseInt(line[1]));
 			break;
 		case "INVOKESTATIC":
 			invokeStatic(clazzes.get(0).getMethod(Integer.parseInt(line[1])));
 			break;
 
 		case "GOTO":
-			
-			break;
+			return goTo(line[1]);
 
 		case "IADD":
-			getStatic(Integer.parseInt(line[1]));
+			iAdd();
+			break;
+		case "ISUB":
+			iSub();
+			break;
+		case "IMUL":
+			iMul();
+			break;
+		case "IDIV":
+			iDiv();
+			break;
+		case "IAND":
+			iAnd();
+			break;
+		case "IOR":
+			iOr();
 			break;
 
-		case "IF_ICMPLT":
-			getStatic(Integer.parseInt(line[1]));
-			break;
-		case "IF_ICMPLE":
-			getStatic(Integer.parseInt(line[1]));
-			break;
-
+		case "IF_ICMPEQ": //compare equal
+			return ifEqual(pc, line[1]);
+		case "IF_ICMPNE": //compare not equal
+			return ifNotEqual(pc, line[1]);
+		case "IF_ICMPGE": //value2 is greater than value1
+			return ifGreaterEqual(pc, line[1]);
+		case "IF_ICMPGT": //value2 is greater than or equal to value1
+			return ifGreater(pc, line[1]);
+		case "IF_ICMPLE": //value2 is less than value1
+			return ifLessEqual(pc, line[1]);
+		case "IF_ICMPLT": //value2 is less than or equal to value1
+			return ifLess(pc, line[1]);
+			
 		case "RETURN":
-			getStatic(Integer.parseInt(line[1]));
+			simpleReturn();
 			break;
 		case "IRETURN":
-			getStatic(Integer.parseInt(line[1]));
+			iReturn();
 			break;
 		case "NOP":
 			getStatic(Integer.parseInt(line[1]));
@@ -112,7 +131,7 @@ public class VirtualMachine {
 
 		return pc++;
 	}
-	
+
 	private void iLoad(int addr) {
 		int val = currThread.getLocalVarValue(addr);
 		currThread.push(val);
@@ -124,11 +143,13 @@ public class VirtualMachine {
 	}
 	
 	private void getStatic(int addr) {
-		
+		int val = constantPool.getById(addr).getValue();
+		currThread.push(val);
 	}
 	
 	private void putStatic(int addr) {
-		
+		int val = currThread.pop();
+		constantPool.getById(addr).setValue(val);
 	}
 	
 	private void ldcW(int addr) {
@@ -140,27 +161,154 @@ public class VirtualMachine {
 		currThread.invokeMethod(m);
 	}
 	
-	private void goTo(int addr) {
+	private int goTo(String label) {
+		int newPc = code.getCodeLineNrByLabel(label);
 		
+		if(newPc == -1) throw new RuntimeException("Invalid label " + label);
+		
+		return newPc;
 	}
 	
 	private void iAdd() {
-		
+		int val1 = currThread.pop();
+		int val2 = currThread.pop();
+		currThread.push(val1 + val2);
 	}
 	
-	private void ifLess() {
-		
+	private void iSub() {
+		int val1 = currThread.pop();
+		int val2 = currThread.pop();
+
+		currThread.push(val2 - val1);				
+	}
+
+	private void iOr() {
+		int val1 = currThread.pop();
+		int val2 = currThread.pop();
+
+		currThread.push(val1 | val2);			
 	}
 	
-	private void ifLessEqual() {
-		 
+	private void iAnd() {
+		int val1 = currThread.pop();
+		int val2 = currThread.pop();
+
+		currThread.push(val1 & val2);			
+	}
+
+	private void iDiv() {
+		int val1 = currThread.pop();
+		int val2 = currThread.pop();
+		
+		if(val1 == 0) throw new RuntimeException("Division by zero!");
+		
+		currThread.push(val2 / val1);		
+	}
+
+	private void iMul() {
+		int val1 = currThread.pop();
+		int val2 = currThread.pop();
+
+		currThread.push(val2 * val1);				
+	}
+	
+	private int ifLess(int pc, String label) {
+		int val1 = currThread.pop();
+		int val2 = currThread.pop();
+		
+		if(val2 < val1) {
+			int newPc = code.getCodeLineNrByLabel(label);
+			
+			if(newPc == -1) throw new RuntimeException("Invalid label " + label);
+			
+			return newPc;
+		}
+		
+		return pc++;
+	}
+	
+	private int ifLessEqual(int pc, String label) {
+		int val1 = currThread.pop();
+		int val2 = currThread.pop();
+		
+		if(val2 <= val1) {
+			int newPc = code.getCodeLineNrByLabel(label);
+			
+			if(newPc == -1) throw new RuntimeException("Invalid label " + label);
+			
+			return newPc;
+		} 
+		
+		return pc++;
+	}
+	
+	private int ifEqual(int pc, String label) {
+		int val1 = currThread.pop();
+		int val2 = currThread.pop();
+		
+		if(val2 == val1) {
+			int newPc = code.getCodeLineNrByLabel(label);
+			
+			if(newPc == -1) throw new RuntimeException("Invalid label " + label);
+			
+			return newPc;
+		}
+
+		return pc++;
+	}
+
+	private int ifNotEqual(int pc, String label) {
+		int val1 = currThread.pop();
+		int val2 = currThread.pop();
+		
+		if(val2 != val1) {
+			int newPc = code.getCodeLineNrByLabel(label);
+			
+			if(newPc == -1) throw new RuntimeException("Invalid label " + label);
+			
+			return newPc;
+		}
+		
+		return pc++;
+	}
+
+	private int ifGreaterEqual(int pc, String label) {
+		int val1 = currThread.pop();
+		int val2 = currThread.pop();
+		
+		if(val2 >= val1) {
+			int newPc = code.getCodeLineNrByLabel(label);
+			
+			if(newPc == -1) throw new RuntimeException("Invalid label " + label);
+			
+			return newPc;
+		}
+
+		return pc++;
+	}
+
+	private int ifGreater(int pc, String label) {
+		int val1 = currThread.pop();
+		int val2 = currThread.pop();
+		
+		if(val2 > val1) {
+			int newPc = code.getCodeLineNrByLabel(label);
+			
+			if(newPc == -1) throw new RuntimeException("Invalid label " + label);
+			
+			return newPc;
+		}
+		
+		return pc++;
 	}
 	
 	private void simpleReturn() {
-		
+		currThread.destroyStackFrame();
 	}
 
 	private void iReturn() {
-		
+		int val = currThread.pop();
+		currThread.destroyStackFrame();
+		currThread.push(val);
 	}
 }

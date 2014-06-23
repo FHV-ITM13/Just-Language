@@ -33,4 +33,15 @@ public class ConstantPool {
 	public Constant getById(int id) {
 		return constants.get(id);
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		
+		for (Constant c : constants.values()) {
+			sb.append(c.getName()).append(": ").append(c.getValue()).append("\n"); 
+		}
+		
+		return sb.toString();
+	}
 }

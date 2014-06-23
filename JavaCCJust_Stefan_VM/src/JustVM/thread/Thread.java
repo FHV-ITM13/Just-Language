@@ -22,7 +22,7 @@ public class Thread {
 		callStack = new CallStack(5);
 		stackFrames = new LinkedList<StackFrame>();
 		
-		stackFrames.add(new StackFrame(0, startMethod.getStackSize(), startMethod.getNrParams()));
+		stackFrames.add(new StackFrame(0, startMethod.getStackSize(), startMethod.getNrLocals(), startMethod.getNrParams()));
 	}
 	
 	public void run() {
@@ -50,11 +50,15 @@ public class Thread {
 	public void invokeMethod(Method m) {
 		//overlay two stackframes, so that the parameters must not be copied
 		int startAddr = stackFrames.getLast().getStart() + stackFrames.getLast().getCurrSize() - m.getNrParams();
-		StackFrame sf = new StackFrame(startAddr, m.getStackSize(), m.getNrParams());
+		StackFrame sf = new StackFrame(startAddr, startMethod.getStackSize(), startMethod.getNrLocals(), startMethod.getNrParams());
 		stackFrames.add(sf);
 	}
 	
 	public boolean isFinished() {
 		return pc == startMethod.getStartAddr() + startMethod.getLength();
+	}
+
+	public void destroyStackFrame() {
+		stackFrames.removeLast();
 	}	
 }

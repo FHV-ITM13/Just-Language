@@ -25,4 +25,14 @@ public class Code {
 	public String getLine(int line) {
 		return code.get(line);
 	}
+	
+	public int getCodeLineNrByLabel(String label) {
+		for (int i = 0; i < code.size(); i++) {
+			if(code.get(i).equals(label)) {
+				return i;
+			}
+		}
+		
+		return -1;
+	}
 }

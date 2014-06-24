@@ -4,17 +4,15 @@ public class StackFrame {
 	private int startAddr;
 	private int maxSize;
 	private int paramCount;
-	private int sp;
-	private int currSize;
 	private int localCount; //only needed for none objects
+	private int sp;
 
 	public StackFrame(int startAddr, int maxSize, int localCount, int paramCount) {
 		this.startAddr = startAddr;
 		this.maxSize = maxSize;
 		this.paramCount = paramCount;
 		this.localCount = localCount;
-		this.sp = startAddr;
-		this.currSize = 0;
+		this.sp = startAddr + paramCount + localCount;
 	}
 
 	public int getStart() {
@@ -33,12 +31,8 @@ public class StackFrame {
 		this.maxSize = size;
 	}
 
-	public int getParameterStartAddr() {
-		return 0; //are the first entries on the stack
-	}
-
 	public int getLocalStartAddr() {
-		return paramCount + localCount + 1; //local vars start after the parameters
+		return startAddr + 0; //params and locals start always at zero
 	}
 
 	public int getSp() {
@@ -51,15 +45,9 @@ public class StackFrame {
 	
 	public void increaseSp() {
 		++sp;
-		++currSize;
 	}
 	
 	public void decreaseSp() {
 		--sp;
-		--currSize;
-	}
-	
-	public int getCurrSize() {
-		return currSize;
 	}
 }

@@ -19,7 +19,7 @@ public class Thread {
 		this.vm = vm;
 		this.startMethod = startMethod;
 
-		callStack = new CallStack(5);
+		callStack = new CallStack(4, startMethod.getNrLocals() + startMethod.getNrParams());
 		stackFrames = new LinkedList<StackFrame>();
 		
 		stackFrames.add(new StackFrame(0, startMethod.getStackSize(), startMethod.getNrLocals(), startMethod.getNrParams()));
@@ -30,13 +30,18 @@ public class Thread {
 	}
 	
 	public void push(int value) {
-		callStack.push(value);
-		stackFrames.getLast().increaseSp();
+		StackFrame last = stackFrames.getLast();
+		callStack.put(last.getSp(), value);
+		last.increaseSp();
 	}
 	
 	public int pop() {
-		stackFrames.getLast().decreaseSp();
-		return callStack.pop();
+		StackFrame last = stackFrames.getLast();
+		last.decreaseSp();
+		int value = callStack.get(last.getSp());
+		//clean stack for better debuggung
+		callStack.put(last.getSp(), 0);
+		return value;
 	}
 	
 	public int getLocalVarValue(int addr) {
@@ -49,16 +54,35 @@ public class Thread {
 	
 	public void invokeMethod(Method m) {
 		//overlay two stackframes, so that the parameters must not be copied
-		int startAddr = stackFrames.getLast().getStart() + stackFrames.getLast().getCurrSize() - m.getNrParams();
-		StackFrame sf = new StackFrame(startAddr, startMethod.getStackSize(), startMethod.getNrLocals(), startMethod.getNrParams());
-		stackFrames.add(sf);
+		int startAddr = stackFrames.getLast().getStart() + stackFrames.getLast().getSp() - m.getNrParams();
+		stackFrames.getLast().setSp(stackFrames.getLast().getSp() - m.getNrParams());
+		
+		StackFrame sf = new StackFrame(startAddr, m.getStackSize(), m.getNrLocals(), m.getNrParams());
+		stackFrames.addLast(sf);
+		
+		int currentPc = pc;
+		int methodLength = m.getStartAddr() + m.getLength();
+		pc = m.getStartAddr();
+		
+		do {
+			pc = vm.execute(pc);
+			printStack();
+		} while(pc != methodLength);
+		
+		System.out.println("After method call");
+		
+		pc = currentPc; //restore pc
 	}
 	
 	public boolean isFinished() {
-		return pc == startMethod.getStartAddr() + startMethod.getLength();
+		return pc == startMethod.getStartAddr() + startMethod.getLength() && stackFrames.size() == 0;
 	}
 
 	public void destroyStackFrame() {
 		stackFrames.removeLast();
+	}
+
+	public void printStack() {
+		callStack.printStack();
 	}	
 }

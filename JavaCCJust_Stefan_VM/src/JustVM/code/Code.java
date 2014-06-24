@@ -27,8 +27,11 @@ public class Code {
 	}
 	
 	public int getCodeLineNrByLabel(String label) {
+		label += ":"; //anchor label has colon at the end
+		//otherwise it is possible to also find jump labels
+		
 		for (int i = 0; i < code.size(); i++) {
-			if(code.get(i).equals(label)) {
+			if(code.get(i).contains(label)) {
 				return i;
 			}
 		}

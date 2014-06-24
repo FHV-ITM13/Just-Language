@@ -12,12 +12,12 @@ public class ConstantPool {
 	}
 	
 	//TODO value should be byte[]
-	public int add(String name, int value, Type type) { 
-		Constant c = new Constant(name, constants.size(), value, type);
+	public int add(int addr, String name, int value, Type type) { 
+		Constant c = new Constant(name, addr, value, type);
 		
-		constants.put(c.getId(), c);
+		constants.put(c.getAddr(), c);
 		
-		return c.getId();
+		return c.getAddr();
 	}
 	
 	public Constant getByName(String name) {

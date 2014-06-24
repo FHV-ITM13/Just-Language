@@ -13,16 +13,17 @@ public class ClazzLoader {
 
 	public static void load(VirtualMachine vm) {
 		//TODO should parse clazzfile
-		vm.addConstant("0", 0, Type.intType);
-		vm.addConstant("10", 10, Type.intType);
-		vm.addConstant("1", 1, Type.intType);
-		vm.addConstant("2", 2, Type.intType);
-
+		vm.addConstant(0, "0", 0, Type.intType);
+		vm.addConstant(1, "10", 10, Type.intType);
+		vm.addConstant(2, "1", 1, Type.intType);
+		vm.addConstant(3, "2", 2, Type.intType);
+		vm.addConstant(7, "globalLimit", 0, Type.intType);
+		
 		loadCode(vm);
 
 		Clazz c = new Clazz("RealTest");
-		Method main = new Method(0, 0, 1, 2, 14);
-		Method doIt = new Method(14, 1, 0, 2, 16);
+		Method main = new Method(0, 0, 0, 1, 2, 14);
+		Method doIt = new Method(17, 14, 1, 0, 2, 16);
 		c.addMethod(main);
 		c.addMethod(doIt);
 		

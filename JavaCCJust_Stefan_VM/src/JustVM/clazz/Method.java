@@ -1,6 +1,7 @@
 package JustVM.clazz;
 
 public class Method {
+	private int index;
 	private int startAddr;
 	private int nrParams;
 	private int nrLocals;
@@ -9,7 +10,8 @@ public class Method {
 	
 	public Method() {}
 	
-	public Method(int startAddr, int nrParams, int nrLocals, int stackSize, int length) {
+	public Method(int index, int startAddr, int nrParams, int nrLocals, int stackSize, int length) {
+		this.index = index;
 		this.stackSize = stackSize;
 		this.startAddr = startAddr;
 		this.nrLocals = nrLocals;
@@ -17,6 +19,14 @@ public class Method {
 		this.length = length;
 	}
 
+	public int getIndex() {
+		return index;
+	}
+	
+	public void setIndex(int index) {
+		this.index = index;
+	}
+	
 	public int getStartAddr() {
 		return startAddr;
 	}

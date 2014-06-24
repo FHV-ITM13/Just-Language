@@ -37,12 +37,15 @@ public class VirtualMachine {
 		
 		while(!mainThread.isFinished()) {
 			mainThread.run();
+			mainThread.printStack();
 		}
+		
+		System.out.println("Finished run");
 	}
 
-	public int addConstant(String name,int value, Type type) {
+	public int addConstant(int addr, String name, int value, Type type) {
 		//TODO type of value should be byte[]
-		return constantPool.add(name, value, type);
+		return constantPool.add(addr, name, value, type);
 	}
 
 	public void addClazz(Clazz clazz) {
@@ -54,7 +57,8 @@ public class VirtualMachine {
 	}
 
 	public String getCodeLine(int line) {
-		return code.getLine(line);
+		String codeLine = code.getLine(line);	
+		return codeLine.contains(":") ? codeLine.split(" ")[1] : codeLine;
 	}
 	
 	public int execute(int pc) {
@@ -77,10 +81,12 @@ public class VirtualMachine {
 		case "PUTSTATIC":
 			putStatic(Integer.parseInt(line[1]));
 			break;
+			
 		case "INVOKESTATIC":
-			invokeStatic(clazzes.get(0).getMethod(Integer.parseInt(line[1])));
-			break;
-
+			System.out.println("Method call");
+ 			invokeStatic(clazzes.get(0).getMethod(Integer.parseInt(line[1])));
+ 			break;
+ 			
 		case "GOTO":
 			return goTo(line[1]);
 
@@ -122,14 +128,15 @@ public class VirtualMachine {
 		case "IRETURN":
 			iReturn();
 			break;
+			
 		case "NOP":
-			getStatic(Integer.parseInt(line[1]));
-			break;
+			return ++pc;
+
 		default:
 			System.err.println("OpCode not available " + line[0]);
 		}
 
-		return pc++;
+		return ++pc;
 	}
 
 	private void iLoad(int addr) {
@@ -162,11 +169,7 @@ public class VirtualMachine {
 	}
 	
 	private int goTo(String label) {
-		int newPc = code.getCodeLineNrByLabel(label);
-		
-		if(newPc == -1) throw new RuntimeException("Invalid label " + label);
-		
-		return newPc;
+		return jumpToLabel(label);
 	}
 	
 	private void iAdd() {
@@ -216,30 +219,22 @@ public class VirtualMachine {
 		int val1 = currThread.pop();
 		int val2 = currThread.pop();
 		
-		if(val2 < val1) {
-			int newPc = code.getCodeLineNrByLabel(label);
-			
-			if(newPc == -1) throw new RuntimeException("Invalid label " + label);
-			
-			return newPc;
+		if(val2 >= val1) {
+			return jumpToLabel(label);
 		}
 		
-		return pc++;
+		return ++pc;
 	}
 	
 	private int ifLessEqual(int pc, String label) {
 		int val1 = currThread.pop();
 		int val2 = currThread.pop();
 		
-		if(val2 <= val1) {
-			int newPc = code.getCodeLineNrByLabel(label);
-			
-			if(newPc == -1) throw new RuntimeException("Invalid label " + label);
-			
-			return newPc;
+		if(val2 > val1) {
+			return jumpToLabel(label);
 		} 
 		
-		return pc++;
+		return ++pc;
 	}
 	
 	private int ifEqual(int pc, String label) {
@@ -247,14 +242,10 @@ public class VirtualMachine {
 		int val2 = currThread.pop();
 		
 		if(val2 == val1) {
-			int newPc = code.getCodeLineNrByLabel(label);
-			
-			if(newPc == -1) throw new RuntimeException("Invalid label " + label);
-			
-			return newPc;
+			return jumpToLabel(label);
 		}
 
-		return pc++;
+		return ++pc;
 	}
 
 	private int ifNotEqual(int pc, String label) {
@@ -262,21 +253,17 @@ public class VirtualMachine {
 		int val2 = currThread.pop();
 		
 		if(val2 != val1) {
-			int newPc = code.getCodeLineNrByLabel(label);
-			
-			if(newPc == -1) throw new RuntimeException("Invalid label " + label);
-			
-			return newPc;
+			return jumpToLabel(label);
 		}
 		
-		return pc++;
+		return ++pc;
 	}
 
 	private int ifGreaterEqual(int pc, String label) {
 		int val1 = currThread.pop();
 		int val2 = currThread.pop();
 		
-		if(val2 >= val1) {
+		if(val2 < val1) {
 			int newPc = code.getCodeLineNrByLabel(label);
 			
 			if(newPc == -1) throw new RuntimeException("Invalid label " + label);
@@ -284,22 +271,18 @@ public class VirtualMachine {
 			return newPc;
 		}
 
-		return pc++;
+		return ++pc;
 	}
 
 	private int ifGreater(int pc, String label) {
 		int val1 = currThread.pop();
 		int val2 = currThread.pop();
 		
-		if(val2 > val1) {
-			int newPc = code.getCodeLineNrByLabel(label);
-			
-			if(newPc == -1) throw new RuntimeException("Invalid label " + label);
-			
-			return newPc;
+		if(val2 <= val1) {
+			return jumpToLabel(label);
 		}
 		
-		return pc++;
+		return ++pc;
 	}
 	
 	private void simpleReturn() {
@@ -310,5 +293,13 @@ public class VirtualMachine {
 		int val = currThread.pop();
 		currThread.destroyStackFrame();
 		currThread.push(val);
+	}
+	
+	private int jumpToLabel(String label) {
+		int newPc = code.getCodeLineNrByLabel(label);
+		
+		if(newPc == -1) throw new RuntimeException("Invalid label " + label);
+		
+		return newPc;
 	}
 }

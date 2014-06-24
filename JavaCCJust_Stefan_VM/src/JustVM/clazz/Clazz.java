@@ -14,11 +14,11 @@ public class Clazz {
 	}
 	
 	public void addMethod(Method method) {
-		methods.put(method.getStartAddr(), method);
+		methods.put(method.getIndex(), method);
 	}
 	
-	public Method getMethod(Integer startAddr) {
-		return methods.get(startAddr);
+	public Method getMethod(Integer index) {
+		return methods.get(index);
 	}
 	
 	public void addClazzVar(ClazzVar clazzVar) {

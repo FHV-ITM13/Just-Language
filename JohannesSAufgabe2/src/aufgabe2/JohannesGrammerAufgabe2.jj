@@ -1,0 +1,81 @@
+/**
+ * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
+ */options{  JDK_VERSION = "1.5";  static = true;}PARSER_BEGIN(EG1)package aufgabe2;import variables.*; 
+ public class EG1{  public static void main(String args []) throws ParseException  {    EG1 parser = new EG1(System.in);    while (true)    {
+      Variables.clear();      System.out.println("Reading from standard input...");      System.out.print("Enter an expression like \"a=1;b=2;1+(a+3)*b=\" :");      try      {        double result = EG1.evaluate();        System.out.println(result);      }      catch (Exception e)      {        System.out.println("NOK.");        System.out.println(e.getMessage());        EG1.ReInit(System.in);      }      catch (Error e)      {        System.out.println("Oops.");        System.out.println(e.getMessage());        break;      }    }  }}PARSER_END(EG1)SKIP :{  " "| "\r"| "\t"| "\n"}TOKEN : /* OPERATORS */{  < PLUS : "+" >| < MINUS : "-" >| < MULTIPLY : "*" >| < DIVIDE : "/" >}TOKEN :{  < CONSTANT : (< DIGIT >)+ >| < #DIGIT : [ "0"-"9" ] >}TOKEN :{  < VARNAME : (< SmallLetter >)+ >| < #SmallLetter : [ "a"-"z" ] >}double evaluate() :{
+  double result;
+}{  (
+    LOOKAHEAD(2)    varDefinition()  )*
+  {    result = calculate();
+    Variables.getUnused();
+    return result;
+  }}void varDefinition() :{  Token var;  Token value;}{  var = < VARNAME >   < "=" >   value = < CONSTANT >   < ";" >  {    Variables.setVar(var.image, value.image);  }}
+
+double calculate():
+{
+  double value;
+  double term;
+}
+{
+  value = term()
+  (
+    "+"
+    term = term()
+    {
+      value += term;
+    }
+  | "-"
+    term = term()
+    {
+      value -= term;
+    }
+  )*
+  {
+    return value;
+  }
+}
+
+double term():
+{
+  double value;
+  double factor;
+}
+{
+  value = factor()
+  (
+    "*"
+    factor = factor()
+    {
+      value *= factor;
+    }
+  | "/"
+    factor = factor()
+    {
+      value /= factor;
+    }
+  )*
+  {
+    return value;
+  }
+}
+
+double factor():
+{
+  Token number;
+  Token var;
+  double value;
+}
+{
+  number = < CONSTANT >
+  {
+    return Integer.parseInt(number.image);
+  }
+| var = < VARNAME >
+  {
+    return Variables.getVar(var.image);
+  }
+| "(" value = calculate() ")"
+  {
+    return value;
+  }
+}

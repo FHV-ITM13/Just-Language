@@ -5,7 +5,7 @@ public class Johannesmain {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		Johannesmain m = new Johannesmain();
-		char[] tape = new char[] { 'z','x','z'};
+		char[] tape = new char[] { 'z', 'X', 'z' };
 		if (m.accept(tape)) {
 			System.out.println("Accept");
 		} else {
@@ -15,9 +15,7 @@ public class Johannesmain {
 	}
 
 	public Boolean accept(char[] tape) {
-		for (char c : tape) {
-			c = new String(new char[] { c }).toLowerCase().toCharArray()[0];
-		}
+		tape = new String(tape).toLowerCase().toCharArray();
 		char z = 'z';
 		char x = 'x';
 		char y = 'y';

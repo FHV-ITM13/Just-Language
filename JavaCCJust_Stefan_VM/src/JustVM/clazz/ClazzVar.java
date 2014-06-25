@@ -1,6 +1,6 @@
 package JustVM.clazz;
 
-import JustVM.Type;
+import JustVM.type.Type;
 
 public class ClazzVar {
 	private String name;

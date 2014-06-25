@@ -1,33 +1,33 @@
 package JustVM.constantPool;
 
-import JustVM.Type;
+import JustVM.type.Type;
 
 public class Constant {
-	private int id;
-	private byte[] value;
+	private int addr;
+	private int value; //TODO should be byte[]
 	private Type type;
 	private String name;
 	
-	public Constant(String name, int id, byte[] value, Type type) {
-		this.id = id;
+	public Constant(String name, int addr, int value, Type type) {
+		this.addr = addr;
 		this.value = value;
 		this.type = type;
 		this.name = name;
 	}
 
-	public int getId() {
-		return id;
+	public int getAddr() {
+		return addr;
 	}
 
-	public void setId(int id) {
-		this.id = id;
+	public void setAddr(int addr) {
+		this.addr = addr;
 	}
 
-	public byte[] getValue() {
+	public int getValue() {
 		return value;
 	}
 
-	public void setValue(byte[] value) {
+	public void setValue(int value) {
 		this.value = value;
 	}
 

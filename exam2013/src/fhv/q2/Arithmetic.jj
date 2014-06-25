@@ -10,9 +10,10 @@ public class Arithmetic{  public static void main(String args []) throws Parse
 | < VAR : (< SIGN >)+ >
 | < #SIGN : [ "a"-"z" ] >}
 
-double evaluation():{
+double evaluation():{ 
   double value;}{
-  (    assign()
+  (
+    LOOKAHEAD(2)    assign()
   )*
   value = expr()
   "="
